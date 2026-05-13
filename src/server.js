@@ -6,6 +6,6 @@ connectDB();
 
 
 
-app.listen(5000,()=>{
+app.listen(config.PORT,()=>{
     console.log("backend running on port 5000")
 })

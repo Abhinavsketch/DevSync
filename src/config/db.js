@@ -1,8 +1,9 @@
 const moongoose = require("mongoose")
+const config = require("./config.js")
 
 const connectDB = async()=>{
     try{
-        await moongoose.connect(process.env.MONGO_URI)
+        await moongoose.connect(config.MONGO_URI)
         console.log("Connection successfull")
     }
 
