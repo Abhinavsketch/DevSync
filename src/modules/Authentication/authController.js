@@ -1,6 +1,8 @@
 const express = require("express");
 const userModel = require("./authModels.js")
 const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
+const config = require("../../config/config.js")
 
 const signupController =async (req,res)=>{
     const {name,email,password} = req.body;
@@ -23,13 +25,66 @@ const signupController =async (req,res)=>{
         email,
         password:hashedPassword
     })
-    res.status(500).json({
+
+    const token = jwt.sign({
+        id:user.id
+    },config.SECRET_KEY,{
+        expiresIn:"7d"
+    })
+
+    user.password = undefined
+
+    res.status(201).json({
         message:"user successfull created",
-        user
+        user,
+        token
     })
     
 }
 
+const loginController = async (req,res)=>{
+    const {email,password} = req.body
+    try{
+        const user = await userModel.findOne({
+            $or:[
+                {email}
+            ]
+        })
+        if(!user){
+            return res.status(400).json({
+                message:"User Not Found"
+            })
+        }
+        const pass = await bcrypt.compare(password,user.password)
+
+        if(!pass){
+            return res.status(400).json({
+                message:"Check your credentials"
+            })
+        }
+
+        const token = jwt.sign({
+            id:user.id
+        },config.SECRET_KEY,{
+            expiresIn:"7d"
+        })
+
+        user.password = undefined;
+
+        res.status(200).json({
+            message:"User Found",
+            user,
+            token
+        })
+    }
+    catch(error){
+        res.status(500).json({
+            message:error.message
+        })
+    }
+}
+
 module.exports = {
-    signupController
+    signupController,
+    loginController
 }
