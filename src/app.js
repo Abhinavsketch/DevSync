@@ -15,6 +15,6 @@ app.get("/",(req,res)=>{
     res.send("DevSync Backend Making start")
 })
 
-app.use("/api/auth",authRouter)
+//app.use("/api/auth",authRouter)
 
 module.exports = app;
