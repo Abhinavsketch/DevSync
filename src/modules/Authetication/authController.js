@@ -1,5 +1,9 @@
 const express = require("express");
 
-export const signupController = ((req,res)=>{
+const signupController = ((req,res)=>{
     
 })
+
+module.exports = {
+    signupController
+}

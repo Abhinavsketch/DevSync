@@ -3,6 +3,8 @@ const cors = require("cors");
 const cookie = require("cookie-parser")
 const authRouter = require("./modules/Authetication/authRoutes.js")
 
+
+
 const app = express();
 
 app.use(cors());
