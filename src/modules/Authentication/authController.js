@@ -2,7 +2,8 @@ const express = require("express");
 const userModel = require("./authModels.js")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
-const config = require("../../config/config.js")
+const config = require("../../config/config.js");
+const User = require("./authModels.js");
 
 const signupController =async (req,res)=>{
     const {name,email,password} = req.body;
@@ -84,7 +85,35 @@ const loginController = async (req,res)=>{
     }
 }
 
+const getmeController = async (req,res)=>{
+    try{
+        const user = await userModel.findById(
+            req.user.id
+        )
+
+        if(!user){
+            res.status(400).json({
+                message:"User not found"
+            })
+        }
+        
+        user.password = undefined
+
+        res.status(200).json({
+            message:"User successfully found",
+            user
+        })
+    }
+    catch(error){
+        res.status(500).json({
+            message:error.message
+        })
+    }
+
+}
+
 module.exports = {
     signupController,
-    loginController
+    loginController,
+    getmeController
 }
