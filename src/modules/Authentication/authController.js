@@ -123,6 +123,21 @@ const getmeController = async (req,res)=>{
 
 }
 
+const logoutController = (req,res)=>{
+    try{
+        res.clearCookie("token")
+
+        res.status(200).json({
+            message:"User successfull Logout"
+        })
+    }
+    catch(error){
+        res.status(500).json({
+            message:"Some problem occur"
+        })
+    }
+}
+
 module.exports = {
     signupController,
     loginController,
