@@ -26,13 +26,19 @@ const signupController =async (req,res)=>{
         password:hashedPassword
     })
 
-    const token = jwt.sign({
+    const accessToken = jwt.sign({
+        id:user.id
+    },config.SECRET_KEY,{
+        expiresIn:"15m"
+    })
+
+    const refreshToken = jwt.sign({
         id:user.id
     },config.SECRET_KEY,{
         expiresIn:"7d"
     })
 
-    res.cookie("token",token,{
+    res.cookie("refreshToken",refreshToken,{
         httpOnly:true,
         secure:true,
         sameSite:"strict",
@@ -44,6 +50,7 @@ const signupController =async (req,res)=>{
     res.status(201).json({
         message:"user successfull created",
         user,
+        accessToken
     })
     
 }
@@ -69,13 +76,19 @@ const loginController = async (req,res)=>{
             })
         }
 
-        const token = jwt.sign({
+        const accessToken = jwt.sign({
+            id:user.id
+        },config.SECRET_KEY,{
+            expiresIn:"15m"
+        })
+
+        const refreshToken = jwt.sign({
             id:user.id
         },config.SECRET_KEY,{
             expiresIn:"7d"
         })
 
-        res.cookie("token",token,{
+        res.cookie("refreshToken",refreshToken,{
         httpOnly:true,
         secure:true,
         sameSite:"strict",
@@ -87,6 +100,7 @@ const loginController = async (req,res)=>{
         res.status(200).json({
             message:"User Found",
             user,
+            accessToken
         })
     }
     catch(error){
@@ -125,7 +139,7 @@ const getmeController = async (req,res)=>{
 
 const logoutController = (req,res)=>{
     try{
-        res.clearCookie("token")
+        res.clearCookie("refreshToken")
 
         res.status(200).json({
             message:"User successfull Logout"
@@ -138,8 +152,40 @@ const logoutController = (req,res)=>{
     }
 }
 
+const refreshController = (req,res)=>{
+    try{
+        const refreshToken = req.cookies.refreshToken
+        if(!refreshToken){
+            res.status(401).json({
+                message:"Invalid"
+            })
+        }
+
+        const decoded = jwt.verify(refreshToken,config.SECRET_KEY)
+
+        const accessToken = jwt.sign({
+            id:decoded.id
+        },config.SECRET_KEY,{
+            expiresIn:"15m"
+        })
+
+        res.status(200).json({
+            message:"Access Token Created",
+            accessToken
+        })
+    }
+    catch(error){
+        res.status(500).json({
+            message:error.message
+        })
+    }
+
+}
+
 module.exports = {
     signupController,
     loginController,
-    getmeController
+    getmeController,
+    refreshController,
+    logoutController
 }
