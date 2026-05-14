@@ -4,14 +4,13 @@ const config = require("../../config/config.js")
 
 const authMiddleWare = async (req,res,next)=>{
     try{
-        const authHead = req.headers.authorization;
-        if(!authHead){
+        const token = req.cookies.token
+        if(!token){
             return res.status(400).json({
-                message:"Token not found"
+                message:"Something went wrong"
             })
         }
 
-        const token = authHead.split(" ")[1]
         const decoded = jwt.verify(token,config.SECRET_KEY)
 
         req.user = decoded

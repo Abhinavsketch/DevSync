@@ -3,13 +3,12 @@ const userModel = require("./authModels.js")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const config = require("../../config/config.js");
-const User = require("./authModels.js");
+const cookie = require("cookie-parser")
 
 const signupController =async (req,res)=>{
     const {name,email,password} = req.body;
     const isAlreadyRegister = await userModel.findOne({
         $or:[
-            {name},
             {email}
         ]
     })
@@ -33,12 +32,18 @@ const signupController =async (req,res)=>{
         expiresIn:"7d"
     })
 
+    res.cookie("token",token,{
+        httpOnly:true,
+        secure:true,
+        sameSite:"strict",
+        maxAge:7*24*60*60*1000
+    })
+
     user.password = undefined
 
     res.status(201).json({
         message:"user successfull created",
         user,
-        token
     })
     
 }
@@ -70,12 +75,18 @@ const loginController = async (req,res)=>{
             expiresIn:"7d"
         })
 
+        res.cookie("token",token,{
+        httpOnly:true,
+        secure:true,
+        sameSite:"strict",
+        maxAge:7*24*60*60*1000
+        })
+
         user.password = undefined;
 
         res.status(200).json({
             message:"User Found",
             user,
-            token
         })
     }
     catch(error){
@@ -92,7 +103,7 @@ const getmeController = async (req,res)=>{
         )
 
         if(!user){
-            res.status(400).json({
+           return res.status(400).json({
                 message:"User not found"
             })
         }
