@@ -20,13 +20,11 @@ const orgSchema = new moongoose.Schema({
     members:[{
         type:moongoose.Schema.Types.ObjectId,
         ref:"User",
-        required:true
     }],
 
     teams:[{
         type:moongoose.Schema.Types.ObjectId,
         ref:"Team",
-        required:true
     }]
 },{
     timestamps:true
