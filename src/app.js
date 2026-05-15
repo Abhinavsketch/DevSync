@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const cookie = require("cookie-parser")
 const authRouter = require("./modules/Authentication/authRoutes.js")
+const orgRouter = require("./modules/Organization/orgRoutes.js")
 
 
 
@@ -17,5 +18,6 @@ app.get("/",(req,res)=>{
 })
 
 app.use("/api/auth",authRouter)
+app.use("/organization",orgRouter)
 
 module.exports = app;
