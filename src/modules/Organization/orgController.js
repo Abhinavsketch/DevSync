@@ -1,5 +1,6 @@
 const express = require("express")
 const orgModel = require("./orgModels.js")
+const userModel = require("../Authentication/authModels.js")
 const { default: mongoose } = require("mongoose")
 
 const createController = async (req,res)=>{
@@ -122,9 +123,53 @@ const singleOrganizationController = async (req,res)=>{
     }
 }
 
+const addMemberController = async (req,res)=>{
+    try{
+        const id = req.params.id
+        const {email} = req.body
+
+        const user = await userModel.findOne({email})
+        if(!user){
+            return res.status(401).json({
+                message:"User not found"
+            })
+        }
+
+        const org = await orgModel.findById(id)
+        if(!org){
+            return res.status(401).json({
+                message:"Organization Not Found"
+            })
+        }
+
+        const duplicate = org.members.includes(user._id)
+        if(duplicate){
+            return res.status(401).json({
+                message:"User Already Exits in this organization"
+            })
+        }
+
+        org.members.push(user._id)
+
+        await org.save()
+
+        res.status(200).json({
+            message:"User Successfull Created",
+            org
+        })
+
+    }
+    catch(error){
+        res.status(500).json({
+            message:error.message
+        })
+    }
+}
+
 module.exports = {
     createController,
     getController,
     ownerController,
-    singleOrganizationController
+    singleOrganizationController,
+    addMemberController
 }
