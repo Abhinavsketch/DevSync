@@ -205,9 +205,60 @@ const removemember = async (req,res)=>{
     }
 }
 
+const changeRole = async (req,res)=>{
+    try{
+        const teamId = req.params.teamid
+        if(!teamId){
+            return res.status(404).json({
+                message:"Team id not found"
+            })
+        }
+
+        const userId = req.params.userid
+        if(!userId){
+            return res.status(404).json({
+                message:"User id not found"
+            })
+        }
+
+        const {newRole} = req.body
+
+        const team = await teamModel.findById(teamId)
+        if(!team){
+            return res.status(404).json({
+                message:"Team not fouund"
+            })
+        }
+
+        const member = team.members.find(
+            member => member.user.toString() === userId.toString()
+        )
+        if(!member){
+            return res.status(404).json({
+                message:"User not found"
+            })
+        }
+
+        member.role = newRole
+        await team.save()
+        
+        res.status(200).json({
+            message:"Role Change Suuccessfully",
+            team
+        })
+    }
+
+    catch(error){
+        res.status(500).json({
+            message:error.message
+        })
+    }
+}
+
 module.exports={
     createController,
     orgTeam,
     addMember,
-    teamMember
+    teamMember,
+    removemember
 }
