@@ -3,6 +3,7 @@ const mongoose = require("mongoose")
 const express = require("express")
 const teamModel = require("./teamModel.js")
 const orgModel = require("../Organization/orgModels.js")
+const userModel = require("../Authentication/authModels.js")
 
 const createController = async (req,res)=>{
     try{
@@ -72,6 +73,92 @@ const orgTeam = async (req,res)=>{
     }
 }
 
+const addMember = async (req,res)=>{
+    try{
+        const teamId = req.params.id
+        const {email,role} = req.body
+        if(!teamId){
+            return res.status(400).json({
+                message:"Team Id not found"
+            })
+        }
+
+        const team = await teamModel.findById(teamId)
+        if(!team){
+            return res.status(400).json({
+                message:"Team not found"
+            })
+        }
+
+        const user = await userModel.findOne({
+                email
+        })
+        if(!user){
+            return res.status(404).json({
+                message:"User not found"
+            })
+        }
+
+        const duplicate = team.members.some(
+            member => member.user.toString() === user._id.toString()
+        )
+
+        if(duplicate){
+            return res.status(409).json({
+                message:"User already exits"
+            })
+        }
+
+        team.members.push({user:user._id,
+            role
+        })
+        await team.save()
+        
+        res.status(200).json({
+            message:"Member Added"
+        })
+
+
+
+    }
+    catch(error){
+        res.status(500).json({
+            message:error.message
+        })
+    }
+}
+
+const teamMember = async (req,res)=>{
+    try{
+        const teamId = req.params.id
+        if(!teamId){
+            return res.status(404).json({
+                message:"Team not found"
+            })
+        }
+
+        const team = await teamModel.findById(teamId).populate("members.user")
+        if(!team){
+            return res.status(404).json({
+                message:"Team not found"
+            })
+        }
+
+        res.status(200).json({
+            message:"User Found",
+            members:team.members
+        })
+    }
+    catch(error){
+        res.status(500).json({
+            message:error.message
+        })
+    }
+}
+
 module.exports={
-    createController
+    createController,
+    orgTeam,
+    addMember,
+    teamMember
 }
