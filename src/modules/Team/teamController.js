@@ -156,6 +156,55 @@ const teamMember = async (req,res)=>{
     }
 }
 
+const removemember = async (req,res)=>{
+    try{
+        const teamId = req.params.teamid
+        if(!teamId){
+            return res.status(404).json({
+                message:"Team ID not fouund"
+            })
+        }
+
+        const userId = req.params.userid
+        if(!userId){
+            return res.status(404).json({
+                message:"User ID not found"
+            })
+        }
+
+        const team = await teamModel.findById(teamId)
+        if(!team){
+            return res.status(404).json({
+                message:"Team not found"
+            })
+        }
+
+        const userPresent = team.members.some(
+            member => member.user.toString() === userId
+        )
+        if(!userPresent){
+            return res.status(404).json({
+                message:"User not found"
+            })
+        }
+
+        team.members = team.members.filter(
+            member => member.user.toString() !== userId
+        )
+        await team.save()
+
+        res.status(200).json({
+            message:"User deleted suuccessfully",
+            members: team.members
+        })
+    }
+    catch(error){
+        res.status(500).json({
+            message:error.message
+        })
+    }
+}
+
 module.exports={
     createController,
     orgTeam,
