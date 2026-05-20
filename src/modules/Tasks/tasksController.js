@@ -54,6 +54,42 @@ const createController = async (req,res)=>{
     }
 }
 
+const getController = async (req,res)=>{
+    try{
+        const projectId = req.params.projectId
+        if(!projectId){
+            return res.status(404).json({
+                message:"Project Id not found"
+            })
+        }
+
+        const project = await projectModel.findById(projectId).populate("tasks")
+        if(!project){
+            return res.status(404).json({
+                message:"Project is not found"
+            })
+        }
+
+        if(project.tasks.length === 0){
+            return res.status(200).json({
+                message:"Taks not found",
+                tasks:[]
+            })
+        }
+
+        res.status(200).json({
+            message:"Tasks Found Successfully",
+            tasks : project.tasks
+        })
+    }
+    catch(error){
+        res.status(500).json({
+            message:error.message
+        })
+    }
+}
+
 module.exports = {
-    createController
+    createController,
+    getController
 }
