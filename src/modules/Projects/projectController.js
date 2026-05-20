@@ -44,6 +44,42 @@ const createProject = async (req,res)=>{
     }
 }
 
+const getProject = async (req,res)=>{
+    try{
+        const teamId = req.params.teamId
+        if(!teamId){
+            return res.status(400).json({
+                message:"Team Id not found"
+            })
+        }
+
+        const team = await teamModel.findById(teamId).populate("projects")
+        if(!team){
+            return res.status(404).json({
+                message:"Team not found"
+            })
+        }
+
+        if(team.projects.length === 0){
+            return res.status(404).json({
+                message:"Project not found"
+            })
+        }
+
+        res.status(200).json({
+            message:"Projects Fonud Successflly",
+            projects:team.projects
+        })
+    }
+
+    catch(error){
+        res.status(500).json({
+            message:error.message
+        })
+    }
+}
+
 module.exports = {
-    createProject
+    createProject,
+    getProject
 }

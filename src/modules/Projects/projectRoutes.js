@@ -1,8 +1,9 @@
 const express = require("express")
-const {createProject} = require("./projectController.js")
+const {createProject,getProject} = require("./projectController.js")
 
 const router = express.Router()
 
 router.post("/create/:teamId",createProject)
+router.get("/getProject/:teamId",getProject)
 
 module.exports = router
