@@ -212,5 +212,6 @@ module.exports = {
     createController,
     getController,
     updateController,
-    assignController
+    assignController,
+    deleteController
 }
