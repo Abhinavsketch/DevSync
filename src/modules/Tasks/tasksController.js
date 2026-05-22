@@ -89,6 +89,39 @@ const getController = async (req,res)=>{
     }
 }
 
+const updateController = async (req,res)=>{
+    try{
+        const taskId = req.params.taskId;
+        if(!taskId){
+            return res.status(404).json({
+                message:"Task Id not found"
+            })
+        }
+
+        const {status} = req.body
+        
+        const task = await taskModel.findById(taskId)
+        if(!task){
+            return res.status(404).json({
+                message:"Task not found"
+            })
+        }
+
+        task.status = status
+        await task.save()
+
+        res.status(200).json({
+            message:"Status Update Successfully",
+            task
+        })
+    }
+    catch(error){
+        res.status(500).json({
+            message:error.message
+        })
+    }
+}
+
 module.exports = {
     createController,
     getController
