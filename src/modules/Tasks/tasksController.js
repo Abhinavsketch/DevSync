@@ -147,7 +147,7 @@ const assignController = async (req,res)=>{
             })
         }
 
-        
+
 
         task.assignee = user._id
         await task.save()
@@ -155,6 +155,50 @@ const assignController = async (req,res)=>{
         res.status(200).json({
             message:"Task Assign Successfully",
             task
+        })
+    }
+    catch(error){
+        res.status(500).json({
+            message:error.message
+        })
+    }
+}
+
+const deleteController = async (req,res)=>{
+    try{
+        const taskId = req.params.taskId
+        if(!taskId){
+            return res.status(400).json({
+                message:"TaskId not Found"
+            })
+        }
+
+        const task = await taskModel.findById(taskId)
+        if(!task){
+            return res.status(404).json({
+                message:"Task not found"
+            })
+        }
+
+        const project = await projectModel.findById(task.project)
+        if(!project){
+            return res.status(404).json({
+                message:"Project Not Found"
+            })
+        }
+
+        const remainingTask = project.tasks.filter(
+            task => task.toString() !== taskId.toString()
+        )
+        
+        project.tasks = remainingTask
+        await project.save()
+
+        await taskModel.findByIdAndDelete(taskId)
+
+        res.status(200).json({
+            message:"Tasks Deleted Successfully",
+            projectModel
         })
     }
     catch(error){
