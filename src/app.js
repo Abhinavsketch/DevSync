@@ -6,6 +6,7 @@ const orgRouter = require("./modules/Organization/orgRoutes.js")
 const teamRouter = require("./modules/Team/teamRoutes.js")
 const projectRoter = require("./modules/Projects/projectRoutes.js")
 const taskRouter = require("./modules/Tasks/taskRoutes.js")
+const kanbanRoutes = require("./modules/Kanban Board/kanbanRoutes.js")
 
 
 
@@ -25,5 +26,6 @@ app.use("/organization",orgRouter)
 app.use("/team",teamRouter)
 app.use("/project",projectRoter)
 app.use("/task",taskRouter)
+app.use("/kanban",kanbanRoutes)
 
 module.exports = app;
