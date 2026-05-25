@@ -4,6 +4,7 @@ const express = require("express")
 const teamModel = require("./teamModel.js")
 const orgModel = require("../Organization/orgModels.js")
 const userModel = require("../Authentication/authModels.js")
+const activityLogger = require("../../utils/activityLog.js")
 
 const createController = async (req,res)=>{
     try{
@@ -30,6 +31,19 @@ const createController = async (req,res)=>{
 
         org.teams.push(team._id)
         await org.save()
+
+        await activityLogger({
+            actor:req.user._id,
+            project:null,
+            entityType:"Team",
+            entity:team._id,
+            action:"CREATE_TEAM",
+            message:`${req.user.name} created team`,
+            oldValue:null,
+            newValue:{
+                name:team.name
+            }
+        })
 
         res.status(200).json({
             message:"Team Created Successfully",
@@ -109,10 +123,23 @@ const addMember = async (req,res)=>{
             })
         }
 
+        const oldMember = [...team.members]
+
         team.members.push({user:user._id,
             role
         })
         await team.save()
+
+        await activityLogger({
+            actor:req.user._id,
+            project:null,
+            entityType:"Team",
+            entity:team._id,
+            action:"ADD_MEMBER",
+            message:`${req.user.name} added member to team`,
+            oldValue:oldMember,
+            newValue:team.members
+        })
         
         res.status(200).json({
             message:"Member Added"
@@ -187,11 +214,24 @@ const removemember = async (req,res)=>{
                 message:"User not found"
             })
         }
+        
+        const oldMember = [...team.members]
 
         team.members = team.members.filter(
             member => member.user.toString() !== userId
         )
         await team.save()
+
+        await activityLogger({
+            actor:req.user._id,
+            project:null,
+            entityType:"Team",
+            entity:team._id,
+            action:"REMOVE_MEMBER",
+            message:`${req.user.name} removed member from ${team.name}`,
+            oldValue:oldMember,
+            newValue:team.members
+        })
 
         res.status(200).json({
             message:"User deleted suuccessfully",
@@ -239,8 +279,21 @@ const changeRole = async (req,res)=>{
             })
         }
 
+        const oldRole = member.role
+
         member.role = newRole
         await team.save()
+
+        await activityLogger({
+            actor:req.user._id,
+            project:null,
+            entityType:"Team",
+            entity:team._id,
+            action:"UPDATE_ROLE",
+            message:`${req.user.name} changed roles in ${team.name}`,
+            oldValue:{role:oldRole},
+            newValue:{role:member.role}
+        })
         
         res.status(200).json({
             message:"Role Change Suuccessfully",
@@ -260,5 +313,6 @@ module.exports={
     orgTeam,
     addMember,
     teamMember,
-    removemember
+    removemember,
+    changeRole
 }

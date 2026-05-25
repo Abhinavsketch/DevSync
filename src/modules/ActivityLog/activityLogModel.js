@@ -18,7 +18,7 @@ const activitySchema = new mongoose.Schema({
     },
     action:{
         type:String,
-        enum:["CREATE_TASK","UPDATE_TASK","DELETE_TASK","STATUS_CHANGE","ADD_MEMBER","REMOVE_MEMBER","UPDATE_ROLE","CREATE_PROJECT","UPDATE_PROJECT","DELETE_PROJECT"]
+        enum:["CREATE_TASK","UPDATE_TASK","DELETE_TASK","STATUS_CHANGE","CREATE_TEAM","ADD_MEMBER","REMOVE_MEMBER","UPDATE_ROLE","CREATE_PROJECT","UPDATE_PROJECT","DELETE_PROJECT"]
     },
     message:{
         type:String
