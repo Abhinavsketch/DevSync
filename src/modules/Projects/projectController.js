@@ -2,6 +2,7 @@ const express = require("express")
 const projectModel = require("./projectModel.js")
 const teamModel = require("../Team/teamModel.js")
 const taskModel = require("../Tasks/taskModel.js")
+const activityLogger = require("../../utils/activityLog.js")
 
 const createProject = async (req,res)=>{
     try{
@@ -30,6 +31,22 @@ const createProject = async (req,res)=>{
 
         team.projects.push(project._id)
         await team.save()
+
+        await activityLogger({
+            actor:req.user._id,
+            project:project._id,
+            entityType:"Project",
+            entity:project._id,
+            action:"CREATE_PROJECT",
+            message:`${req.user.name} created project`,
+            oldValue:null,
+            newValue:{
+                title:project.title,
+                status:project.status,
+                deadline:project.deadline
+            }
+            
+        })
 
         res.status(201).json({
             message:"Project Created Successfully",
@@ -98,6 +115,13 @@ const updateController = async (req,res)=>{
             })
         }
 
+        const oldProject = {
+            title:project.title,
+            description:project.description,
+            status:project.status,
+            deadline:project.deadline
+        }
+
         if(title){
             project.title = title
         }
@@ -113,7 +137,25 @@ const updateController = async (req,res)=>{
             project.deadline = deadline
         }
 
+
+
         await project.save()
+
+        await activityLogger({
+            actor:req.user._id,
+            project:projectId,
+            entityType:"Project",
+            entity:projectId,
+            action:"UPDATE_PROJECT",
+            message:`${req.user.name} updated the Project`,
+            oldValue:oldProject,
+            newValue:{
+                title:project.title,
+                description:project.description,
+                status:project.status,
+                deadline:project.deadline
+            }
+        })
 
         res.status(200).json({
             message:"project Updated Successfully",
@@ -143,6 +185,13 @@ const deleteController = async (req,res)=>{
             })
         }
 
+        const oldProject = {
+            title:project.title,
+            description:project.description,
+            status:project.status,
+            deadline:project.deadline
+        }
+
         await taskModel.deleteMany({
             _id:{
                 $in:project.tasks
@@ -164,6 +213,17 @@ const deleteController = async (req,res)=>{
         await team.save()
 
         await projectModel.findByIdAndDelete(projectId)
+
+        await activityLogger({
+            actor:req.user._id,
+            project:projectId,
+            entityType:"Project",
+            entity:projectId,
+            action:"DELETE_PROJECT",
+            message:`${req.user.name} deleted  project ${oldProject.title}`,
+            oldValue:oldProject,
+            newValue:null
+        })
 
         res.status(200).json({
             message:"Project Deleted Successfully",

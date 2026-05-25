@@ -233,6 +233,13 @@ const deleteController = async (req,res)=>{
             })
         }
 
+        const oldTask = {
+            title:task.title,
+            status:task.status,
+            priority:task.priority,
+            assignee:task.assignee
+        }
+
         const remainingTask = project.tasks.filter(
             task => task.toString() !== taskId.toString()
         )
@@ -249,7 +256,7 @@ const deleteController = async (req,res)=>{
             entity:task._id,
             action:"DELETE_TASK",
             message:`${req.user.name} deleted task`,
-            oldValue:null,
+            oldValue:oldTask,
             newValue:null
         })
 
