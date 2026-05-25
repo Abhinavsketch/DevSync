@@ -2,6 +2,7 @@ const express = require("express")
 const taskModel = require("./taskModel.js")
 const projectModel = require("../Projects/projectModel.js")
 const userModel = require("../Authentication/authModels.js")
+const activityLogger = require("../../utils/activityLog.js")
 
 const createController = async (req,res)=>{
     try{
@@ -40,6 +41,19 @@ const createController = async (req,res)=>{
 
         project.tasks.push(task._id)
         await project.save()
+
+        await activityLogger({
+            actor:req.user.name,
+            project:projectId,
+            entityType:"Task",
+            entity:task._id,
+            action:"CREATE_TASK",
+            message:`${req.user._id} created Task`,
+            oldValue:null,
+            newValue:{
+                status:task.status
+            }
+        })
 
         res.status(201).json({
             message:"Task Created Successfully",
@@ -107,8 +121,40 @@ const updateController = async (req,res)=>{
             })
         }
 
+        await activityLogger({
+            actor:req.user._id,
+            project:task.project,
+            entityType:"Task",
+            entity:taskId,
+            action:"STATUS_CHANGE",
+            message:`${req.user.name} updated the task Status`,
+            oldValue:{
+                status:task.status
+            },
+            newValue:{
+                status:status
+            }
+        })
+
+        const oldStatus = task.status
+
         task.status = status
         await task.save()
+        
+        await activityLogger({
+            actor:req.user._id,
+            project:task.project,
+            entityType:"Task",
+            entity:taskId,
+            action:"STATUS_CHANGE",
+            message:`${req.user.name} updated the task Status`,
+            oldValue:{
+                status:oldStatus
+            },
+            newValue:{
+                status:status
+            }
+        })
 
         res.status(200).json({
             message:"Status Update Successfully",
@@ -196,9 +242,20 @@ const deleteController = async (req,res)=>{
 
         await taskModel.findByIdAndDelete(taskId)
 
+        await activityLogger({
+            actor:req.user._id,
+            project:project._id,
+            entityType:"Task",
+            entity:task._id,
+            action:"DELETE_TASK",
+            message:`${req.user.name} deleted task`,
+            oldValue:null,
+            newValue:null
+        })
+
         res.status(200).json({
             message:"Tasks Deleted Successfully",
-            projectModel
+            project
         })
     }
     catch(error){
