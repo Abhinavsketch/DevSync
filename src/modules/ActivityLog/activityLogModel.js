@@ -9,6 +9,10 @@ const activitySchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"Project"
     },
+    organization:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Organization"
+    },
     entityType:{
         type:String,
         enum:["Task","Project","Team"]

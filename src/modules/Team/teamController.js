@@ -35,6 +35,7 @@ const createController = async (req,res)=>{
         await activityLogger({
             actor:req.user._id,
             project:null,
+            organization:orgId,
             entityType:"Team",
             entity:team._id,
             action:"CREATE_TEAM",
