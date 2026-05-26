@@ -22,7 +22,7 @@ const createController = async (req,res)=>{
             })
         }
 
-        const project = await projectModel.findById(projectId)
+        const project = await projectModel.findById(projectId).populate("team")
         if(!project){
             return res.status(404).json({
                 message:"Project not found"
@@ -45,6 +45,7 @@ const createController = async (req,res)=>{
         await activityLogger({
             actor:req.user.name,
             project:projectId,
+            organization:project.team.organization,
             entityType:"Task",
             entity:task._id,
             action:"CREATE_TASK",
@@ -121,20 +122,8 @@ const updateController = async (req,res)=>{
             })
         }
 
-        await activityLogger({
-            actor:req.user._id,
-            project:task.project,
-            entityType:"Task",
-            entity:taskId,
-            action:"STATUS_CHANGE",
-            message:`${req.user.name} updated the task Status`,
-            oldValue:{
-                status:task.status
-            },
-            newValue:{
-                status:status
-            }
-        })
+        const project = await projectModel.findById(task.project).populate("team")
+
 
         const oldStatus = task.status
 
@@ -144,6 +133,7 @@ const updateController = async (req,res)=>{
         await activityLogger({
             actor:req.user._id,
             project:task.project,
+            organization:project.team.organization,
             entityType:"Task",
             entity:taskId,
             action:"STATUS_CHANGE",
@@ -226,7 +216,7 @@ const deleteController = async (req,res)=>{
             })
         }
 
-        const project = await projectModel.findById(task.project)
+        const project = await projectModel.findById(task.project).populate("team")
         if(!project){
             return res.status(404).json({
                 message:"Project Not Found"
@@ -252,6 +242,7 @@ const deleteController = async (req,res)=>{
         await activityLogger({
             actor:req.user._id,
             project:project._id,
+            organization:project.team.organization,
             entityType:"Task",
             entity:task._id,
             action:"DELETE_TASK",

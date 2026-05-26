@@ -35,6 +35,7 @@ const createProject = async (req,res)=>{
         await activityLogger({
             actor:req.user._id,
             project:project._id,
+            organization:team.organization,
             entityType:"Project",
             entity:project._id,
             action:"CREATE_PROJECT",
@@ -108,12 +109,14 @@ const updateController = async (req,res)=>{
 
         const {title,description,status,deadline} = req.body
 
-        const project = await projectModel.findById(projectId)
+        const project = await projectModel.findById(projectId).populate("team")
         if(!project){
             return res.status(404).json({
                 message:"Project not Found"
             })
         }
+
+        const orgId = project.team.organization
 
         const oldProject = {
             title:project.title,
@@ -144,6 +147,7 @@ const updateController = async (req,res)=>{
         await activityLogger({
             actor:req.user._id,
             project:projectId,
+            organization:orgId,
             entityType:"Project",
             entity:projectId,
             action:"UPDATE_PROJECT",
@@ -217,6 +221,7 @@ const deleteController = async (req,res)=>{
         await activityLogger({
             actor:req.user._id,
             project:projectId,
+            organization:team.organization,
             entityType:"Project",
             entity:projectId,
             action:"DELETE_PROJECT",

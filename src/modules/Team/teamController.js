@@ -134,6 +134,7 @@ const addMember = async (req,res)=>{
         await activityLogger({
             actor:req.user._id,
             project:null,
+            organization:team.organization,
             entityType:"Team",
             entity:team._id,
             action:"ADD_MEMBER",
@@ -226,6 +227,7 @@ const removemember = async (req,res)=>{
         await activityLogger({
             actor:req.user._id,
             project:null,
+            organization:team.organization,
             entityType:"Team",
             entity:team._id,
             action:"REMOVE_MEMBER",
@@ -288,6 +290,7 @@ const changeRole = async (req,res)=>{
         await activityLogger({
             actor:req.user._id,
             project:null,
+            organization:team.organization,
             entityType:"Team",
             entity:team._id,
             action:"UPDATE_ROLE",
