@@ -8,6 +8,7 @@ const projectRoter = require("./modules/Projects/projectRoutes.js")
 const taskRouter = require("./modules/Tasks/taskRoutes.js")
 const kanbanRoutes = require("./modules/Kanban Board/kanbanRoutes.js")
 const activityRoutes = require("./modules/ActivityLog/activityLogRoutes.js")
+const dashboardRoutes = require("./modules/Dashboard/dashboardRoutes.js")
 
 
 
@@ -29,5 +30,6 @@ app.use("/project",projectRoter)
 app.use("/task",taskRouter)
 app.use("/kanban",kanbanRoutes)
 app.use("/activity",activityRoutes)
+app.use("/dashboard",dashboardRoutes)
 
 module.exports = app;
