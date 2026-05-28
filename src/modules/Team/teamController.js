@@ -5,6 +5,7 @@ const teamModel = require("./teamModel.js")
 const orgModel = require("../Organization/orgModels.js")
 const userModel = require("../Authentication/authModels.js")
 const activityLogger = require("../../utils/activityLog.js")
+const notification= require("../../services/notificationService.js")
 
 const createController = async (req,res)=>{
     try{
@@ -143,6 +144,16 @@ const addMember = async (req,res)=>{
             newValue:team.members
         })
         
+        await notification({
+            receiver:user._id,
+            sender:req.user._id,
+            action:"TEAM_MEMBER_ADD",
+            message:`You were added to ${team.name}`,
+            entityType:"Team",
+            entityId:team._id,
+            organization:team.organization,
+            read:false
+        })
         res.status(200).json({
             message:"Member Added"
         })
@@ -201,6 +212,13 @@ const removemember = async (req,res)=>{
             })
         }
 
+        const user = await userModel.findById(userId)
+        if(!user){
+            return res.status(400).json({
+                message:"User does not exits"
+            })
+        }
+
         const team = await teamModel.findById(teamId)
         if(!team){
             return res.status(404).json({
@@ -234,6 +252,17 @@ const removemember = async (req,res)=>{
             message:`${req.user.name} removed member from ${team.name}`,
             oldValue:oldMember,
             newValue:team.members
+        })
+
+        await notification({
+            receiver:user._id,
+            sender:req.user._id,
+            action:"TEAM_MEMBER_REMOVE",
+            message:`You were remove from ${team.name}`,
+            entityType:"Team",
+            entityId:teamId,
+            organization:team.organization,
+            read:false
         })
 
         res.status(200).json({
@@ -273,6 +302,13 @@ const changeRole = async (req,res)=>{
             })
         }
 
+        const user = await userModel.findById(userId)
+        if(!user){
+            return res.status(400).json({
+                message:"User not found"
+            })
+        }
+
         const member = team.members.find(
             member => member.user.toString() === userId.toString()
         )
@@ -297,6 +333,18 @@ const changeRole = async (req,res)=>{
             message:`${req.user.name} changed roles in ${team.name}`,
             oldValue:{role:oldRole},
             newValue:{role:member.role}
+        })
+
+        await notification({
+            receiver:user._id,
+            sender:req.user._id,
+            action:"ROLE_UPDATE",
+            message:`Your role updated in ${team.name}`,
+            entityType:"Team",
+            entityId:teamId,
+            organization:team.organization,
+            read:false
+
         })
         
         res.status(200).json({

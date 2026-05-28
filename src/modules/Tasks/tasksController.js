@@ -3,6 +3,7 @@ const taskModel = require("./taskModel.js")
 const projectModel = require("../Projects/projectModel.js")
 const userModel = require("../Authentication/authModels.js")
 const activityLogger = require("../../utils/activityLog.js")
+const notification = require("../../services/notificationService.js")
 
 const createController = async (req,res)=>{
     try{
@@ -183,10 +184,20 @@ const assignController = async (req,res)=>{
             })
         }
 
-
+        const project = await projectModel.findById(task.project).populate("team")
 
         task.assignee = user._id
         await task.save()
+
+        await notification({
+            receiver:user._id,
+            sender:req.user._id,
+            action:"TASK_ASSIGN",
+            entityType:"Task",
+            entityId:task._id,
+            organization:project.team.organization,
+            read:false
+        })
 
         res.status(200).json({
             message:"Task Assign Successfully",

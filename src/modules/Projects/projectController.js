@@ -3,6 +3,7 @@ const projectModel = require("./projectModel.js")
 const teamModel = require("../Team/teamModel.js")
 const taskModel = require("../Tasks/taskModel.js")
 const activityLogger = require("../../utils/activityLog.js")
+const notification = require("../../services/notificationService.js")
 
 const createProject = async (req,res)=>{
     try{

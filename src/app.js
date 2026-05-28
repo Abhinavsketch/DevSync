@@ -10,6 +10,7 @@ const kanbanRoutes = require("./modules/Kanban Board/kanbanRoutes.js")
 const activityRoutes = require("./modules/ActivityLog/activityLogRoutes.js")
 const dashboardRoutes = require("./modules/Dashboard/dashboardRoutes.js")
 const searchFilterRoutes = require("./modules/SearchAndFilter/searchFilterroutes.js")
+const notificationRoutes = require("./modules/notification/notificationRoutes.js")
 
 
 const app = express();
@@ -32,6 +33,7 @@ app.use("/kanban",kanbanRoutes)
 app.use("/activity",activityRoutes)
 app.use("/dashboard",dashboardRoutes)
 app.use("/search",searchFilterRoutes)
+app.use("/notify",notificationRoutes)
 
 
 module.exports = app;
