@@ -98,14 +98,14 @@ const singleOrganizationController = async (req,res)=>{
     try{
         const id = req.params.id
         if(!id){
-            res.status(400).json({
+            return res.status(400).json({
                 message:"No Data Found"
             })
         }
 
         const org = await orgModel.findById(id).populate("members").populate("teams")
         if(!org){
-            res.status(400).json({
+            return res.status(400).json({
                 message:"No Data Found"
             })
         }
