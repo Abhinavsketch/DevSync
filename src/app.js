@@ -11,6 +11,7 @@ const activityRoutes = require("./modules/ActivityLog/activityLogRoutes.js")
 const dashboardRoutes = require("./modules/Dashboard/dashboardRoutes.js")
 const searchFilterRoutes = require("./modules/SearchAndFilter/searchFilterroutes.js")
 const notificationRoutes = require("./modules/notification/notificationRoutes.js")
+const chatRoutes = require("./modules/chats/teamChatRoutes.js")
 
 
 const app = express();
@@ -34,6 +35,6 @@ app.use("/activity",activityRoutes)
 app.use("/dashboard",dashboardRoutes)
 app.use("/search",searchFilterRoutes)
 app.use("/notify",notificationRoutes)
-
+app.use("/chat",chatRoutes)
 
 module.exports = app;
