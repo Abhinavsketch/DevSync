@@ -124,9 +124,9 @@ const projectfilterController = async (req,res)=>{
         }
 
         const status = req.query.status
-        if(!query){
+        if(!status){
             return res.status(400).json({
-                message:"Query not Found"
+                message:"Status not Found"
             })
         }
 

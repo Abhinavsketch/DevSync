@@ -4,8 +4,8 @@ const {ChangeController,taskChangeController,teamChangeController,projectChangeC
 
 const router = express.Router()
 
-router.get("Changes/:id",ChangeController)
-router.get("taskChange/:id",taskChangeController)
+router.get("/Changes/:id",ChangeController)
+router.get("/taskChange/:id",taskChangeController)
 router.get("/teamChange/:id",teamChangeController)
 router.get("/projectChange/:id",projectChangeController)
 

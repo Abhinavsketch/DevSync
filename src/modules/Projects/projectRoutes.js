@@ -6,7 +6,7 @@ const router = express.Router()
 
 router.post("/create/:teamId",authMiddleWare,createProject)
 router.get("/getProject/:teamId",authMiddleWare,getProject)
-router .post("/update/:projectId",authMiddleWare,updateController)
-router.post("delete/:projectId",authMiddleWare,deleteController)
+router.post("/update/:projectId",authMiddleWare,updateController)
+router.post("/delete/:projectId",authMiddleWare,deleteController)
 
 module.exports = router

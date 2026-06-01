@@ -44,13 +44,13 @@ const createController = async (req,res)=>{
         await project.save()
 
         await activityLogger({
-            actor:req.user.name,
+            actor:req.user._id,
             project:projectId,
             organization:project.team.organization,
             entityType:"Task",
             entity:task._id,
             action:"CREATE_TASK",
-            message:`${req.user._id} created Task`,
+            message:`${req.user.name} created Task`,
             oldValue:null,
             newValue:{
                 status:task.status

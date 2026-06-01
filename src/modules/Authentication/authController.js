@@ -156,7 +156,7 @@ const refreshController = (req,res)=>{
     try{
         const refreshToken = req.cookies.refreshToken
         if(!refreshToken){
-            res.status(401).json({
+            return res.status(401).json({
                 message:"Invalid"
             })
         }

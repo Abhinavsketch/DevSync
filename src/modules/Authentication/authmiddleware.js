@@ -1,22 +1,40 @@
 const express = require("express")
 const jwt = require("jsonwebtoken")
 const config = require("../../config/config.js")
+const userModel = require("./authModels.js")
 
 const authMiddleWare = async (req,res,next)=>{
     try{
 
         const authHeader = req.headers.authorization
         if(!authHeader){
-            res.status(401).json({
+            return res.status(401).json({
                 message:"Token not found"
             })
         }
 
         const token = authHeader.split(" ")[1]
+        if(!token){
+            return res.status(401).json({
+                message:"Invalid token format"
+            })
+        }
 
         const decoded = jwt.verify(token,config.SECRET_KEY)
 
-        req.user = decoded
+        const user = await userModel.findById(decoded.id).select("-password")
+        if(!user){
+            return res.status(401).json({
+                message:"User not found"
+            })
+        }
+
+        req.user = {
+            id:user.id,
+            _id:user._id,
+            name:user.name,
+            email:user.email
+        }
 
         next()
     }
