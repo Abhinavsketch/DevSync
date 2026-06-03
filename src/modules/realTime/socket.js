@@ -1,5 +1,6 @@
 const setupChatSocket = require("./chatSocket.js")
 const setupNotificationSocket =require("./notification.js")
+const kanbanBoardSocket = require("./kanbanBoard.js")
 const authSocket = require("./authSocket.js")
 
 const setUpSocket = (io) => {
@@ -9,6 +10,7 @@ const setUpSocket = (io) => {
 
     setupNotificationSocket(io,socket)
     setupChatSocket(io,socket)
+    kanbanBoardSocket(io,socket)
 
     socket.on("disconnect", () => {
       console.log(`Same User Disconnect ${socket.id}`);

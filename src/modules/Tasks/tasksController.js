@@ -4,6 +4,7 @@ const projectModel = require("../Projects/projectModel.js")
 const userModel = require("../Authentication/authModels.js")
 const activityLogger = require("../../utils/activityLog.js")
 const notification = require("../../services/notificationService.js")
+const {getIo} = require("../realTime/socketManager.js")
 
 const createController = async (req,res)=>{
     try{
@@ -56,6 +57,9 @@ const createController = async (req,res)=>{
                 status:task.status
             }
         })
+
+        const io = getIo()
+        io.to(`project:${projectId}`).emit("task-created",task)
 
         res.status(201).json({
             message:"Task Created Successfully",
@@ -147,6 +151,9 @@ const updateController = async (req,res)=>{
             }
         })
 
+        const io = getIo()
+        io.to(`project:${task.project}`).emit("task-status-updated",task)
+
         res.status(200).json({
             message:"Status Update Successfully",
             task
@@ -193,11 +200,15 @@ const assignController = async (req,res)=>{
             receiver:user._id,
             sender:req.user._id,
             action:"TASK_ASSIGN",
+            message:"You were assigned Task",
             entityType:"Task",
             entityId:task._id,
             organization:project.team.organization,
             read:false
         })
+
+        const io = getIo()
+        io.to(`project:${task.project}`).emit("task-assigned",task)
 
         res.status(200).json({
             message:"Task Assign Successfully",
@@ -261,6 +272,9 @@ const deleteController = async (req,res)=>{
             oldValue:oldTask,
             newValue:null
         })
+
+        const io = getIo()
+        io.to(`project:${task.project}`).emit("task-deleted",task)
 
         res.status(200).json({
             message:"Tasks Deleted Successfully",
