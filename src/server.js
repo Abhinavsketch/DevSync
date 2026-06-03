@@ -3,6 +3,7 @@ const config = require("./config/config.js")
 const connectDB = require("./config/db.js")
 const http = require("http")
 const server = http.createServer(app)
+const {setIo} = require("./modules/realTime/socketManager.js")
 const {Server} = require("socket.io")
 const io = new Server(server,{
     cors:{
@@ -12,6 +13,7 @@ const io = new Server(server,{
     
 })
 
+setIo(io)
 const setUpSocket = require("./modules/realTime/socket.js")
 
 const startServer = async ()=>{

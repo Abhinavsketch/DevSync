@@ -1,4 +1,5 @@
 const setupChatSocket = require("./chatSocket.js")
+const setupNotificationSocket =require("./notification.js")
 const authSocket = require("./authSocket.js")
 
 const setUpSocket = (io) => {
@@ -6,6 +7,7 @@ const setUpSocket = (io) => {
   io.on("connection", (socket) => {
     console.log(`A user connected ${socket.id}`);
 
+    setupNotificationSocket(io,socket)
     setupChatSocket(io,socket)
 
     socket.on("disconnect", () => {
