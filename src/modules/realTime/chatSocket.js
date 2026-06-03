@@ -41,6 +41,7 @@ const setupChatSocket = (io, socket) => {
       });
     }
   });
+
   socket.on("send-team-message", async (teamId, content) => {
     try {
       if (!teamId) {
@@ -88,6 +89,55 @@ const setupChatSocket = (io, socket) => {
       });
     }
   });
+
+  socket.on("edit-team-message",async(messageId,content)=>{
+    try{
+      if(!messageId){
+        return socket.emit("socket-error",{
+          message:"Message Id not found"
+        })
+      }
+
+      const message = await chatModel.findById(messageId)
+      if(!message){
+        return socket.emit("socket-error",{
+          message:"Message not found"
+        })
+      }
+
+      if(message.sender.toString() !== socket.user.id.toString()){
+        return socket.emit("socket-error",{
+          message:"You are not the sender"
+        })
+      }
+
+      if(message.deletedAt !== null){
+        return socket.emit("socket-error",{
+          message:"This message is already deleted"
+        })
+      }
+
+      if(!content || content.trim() === ""){
+        return socket.emit("socket-error",{
+          message:"Content not found"
+        })
+      }
+
+      message.content = content.trim()
+      message.isEdited = true
+      await message.save()
+
+      const room = `team:${message.team}`
+      io.to(room).emit("message-edited",message)
+    }
+    catch(error){
+      socket.emit("socket-error",{
+        message:error.message
+      })
+    }
+
+  })
+  
 };
 
 module.exports = setupChatSocket;
