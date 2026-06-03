@@ -137,7 +137,47 @@ const setupChatSocket = (io, socket) => {
     }
 
   })
-  
+
+  socket.on("delete-team-message",async (messageId)=>{
+    try{
+      if(!messageId){
+      return socket.emit("socket-error",{
+        message:"Message Id not found"
+      })
+    }
+
+    const message = await chatModel.findById(messageId)
+    if(!message){
+      return socket.emit("socket-error",{
+        message:"Message Not Found"
+      })
+    }
+
+    if(message.sender.toString() !== socket.user.id.toString()){
+      return socket.emit("socket-error",{
+        message:"You are not a sender of this message"
+      })
+    }
+
+    if(message.deletedAt !== null){
+      return socket.emit("socket-error",{
+        message:"This message already Deleted"
+      })
+    }
+
+    message.deletedAt = new Date()
+    await message.save()
+
+    const room = `team:${message.team}`
+    io.to(room).emit("message-deleted",message)
+    }
+    catch(error){
+      socket.emit("socket-error",{
+        message:error.message
+      })
+    }
+  })
+
 };
 
 module.exports = setupChatSocket;
