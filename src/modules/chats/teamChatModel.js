@@ -18,7 +18,6 @@ const teamChatModel = new mongoose.Schema({
     },
     content:{
         type:String,
-        required:true,
         trim:true
     },
     isEdited:{
@@ -28,6 +27,16 @@ const teamChatModel = new mongoose.Schema({
     deletedAt:{
         type:Date,
         default:null
+    },
+    attachments:{
+        type:[{
+            originalName:String,
+            fileName:String,
+            filePath:String,
+            mimeType:String,
+            size:Number
+        }],
+        default:[]
     }
 },{
     timestamps:true

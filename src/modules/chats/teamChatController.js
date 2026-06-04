@@ -1,6 +1,6 @@
-const express = require("express")
 const teamModel = require("../Team/teamModel.js")
 const chatModel = require("../chats/teamChatModel.js")
+const {getIo} = require("../realTime/socketManager.js")
 
 const sendMessageController = async (req,res)=>{
     try{
@@ -227,9 +227,74 @@ const editMessageController = async (req,res)=>{
     }
 }
 
+const uploadController = async (req,res)=>{
+    try{
+        const teamId = req.params.teamId
+        if(!teamId){
+            return res.status(400).json({
+                message:"Team Id not found"
+            })
+        }
+
+        const team = await teamModel.findById(teamId)
+        if(!team){
+            return res.status(400).json({
+                message:"Team not found"
+            })
+        }
+
+        const isMember = team.members.some(
+            member => member.user.toString() === req.user._id.toString()
+        )
+        if(!isMember){
+            return res.status(400).json({
+                message:"Member not found in the team"
+            })
+        }
+
+        if(!req.file){
+            return res.status(400).json({
+                message:"File not uploaded"
+            })
+        }
+
+
+        const chat = await chatModel.create({
+            organization:team.organization,
+            team:teamId,
+            sender:req.user._id,
+            content:req.body.content,
+            attachments:[{
+                originalName:req.file.originalname,
+                fileName:req.file.filename,
+                filePath:`/uploads/chats/${req.file.filename}`,
+                mimeType:req.file.mimetype,
+                size:req.file.size
+            }]
+        })
+
+        await chat.populate("sender","name email")
+
+        const io = getIo()
+        const room = `team:${teamId}`
+        io.to(room).emit("receive-team-message",chat)
+
+        res.status(201).json({
+            message:"File uploaded Successfully",
+            chat
+        })
+    }
+    catch(error){
+        res.status(500).json({
+            message:error.message
+        })
+    }
+}
+
 module.exports = {
     sendMessageController,
     getMessageController,
     deleteMessageController,
-    editMessageController
+    editMessageController,
+    uploadController
 }

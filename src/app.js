@@ -20,6 +20,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookie());
+app.use("/uploads", express.static("uploads"));
 
 app.get("/",(req,res)=>{
     res.send("DevSync Backend Making start")
