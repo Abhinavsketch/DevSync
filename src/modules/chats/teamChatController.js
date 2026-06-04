@@ -291,10 +291,57 @@ const uploadController = async (req,res)=>{
     }
 }
 
+const filesController = async(req,res)=>{
+    try{
+        const teamId = req.params.teamId
+        if(!teamId){
+            return res.status(400).json({
+                message:"Team Id not found"
+            })
+        }
+
+        const team = await teamModel.findById(teamId)
+        if(!team){
+            return res.status(400).json({
+                message:"Team not found"
+            })
+        }
+
+        const isMember = team.members.some(
+            member => member.user.toString() === req.user.id.toString()
+        )
+
+        if(!isMember){
+            return res.status(403).json({
+                message:"You are not member of team"
+            })
+        }
+
+        const chat = await chatModel.find({team:teamId,deletedAt:null,"attachments.0":{$exists:true}}).sort({createdAt:-1}).populate("sender","name email")
+        if(chat.length === 0){
+            return res.status(200).json({
+                message:"Files not found",
+                files:[]
+            })
+        }
+
+        res.status(200).json({
+            message:"Files Found",
+            files:chat
+        })
+    }
+    catch(error){
+        res.status(500).json({
+            message:error.message
+        })
+    }
+}
+
 module.exports = {
     sendMessageController,
     getMessageController,
     deleteMessageController,
     editMessageController,
-    uploadController
+    uploadController,
+    filesController
 }
