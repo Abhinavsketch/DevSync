@@ -1,0 +1,84 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Manrope", sans-serif;
+}
+
+.navbar{
+    width:100%;
+    height: 10vh;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar .intro{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap:10px;
+}
+
+
+.navbar .intro .brand-logo{
+    color:aqua;
+    width:2rem;
+    height: 2rem;
+}
+
+
+.navbar .intro .name{
+    color: white;
+    font-size:clamp(1rem,2rem,6rem);
+    font-weight: 800;
+}
+
+.navbar .features{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap:15px;
+}
+
+.navbar .features a{
+    text-decoration: none;
+    color: white;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.navbar .cta{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap:10px;
+}
+
+
+.navbar .cta .cta-link{
+    border:none;
+    outline: none;
+    cursor: pointer;
+    color: white
+}
+
+
+.navbar .cta .login{
+    background: transparent;
+    font-weight: 900;
+
+}
+
+
+.navbar .cta .started{
+    background-color: #2DD4BF;
+    padding: 10px;
+    border: 1px solid white;
+    box-shadow: 0 0.75rem 2rem rgba(45, 212, 191, 0.25);
+    font-weight: 900;
+    border-radius: 10px;
+}

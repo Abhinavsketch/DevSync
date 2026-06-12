@@ -1,0 +1,65 @@
+*{
+    margin:0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.intro{
+    height: 100%;
+}
+
+.intro .about{
+    padding:20px;
+    display: flex;
+    align-items: start;
+    justify-content:center ;
+    height: 100%;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.intro .about .heading h2{
+    color: white;
+    font-size: 3rem;
+}
+
+.intro .about .heading h2 span{
+    color:aqua;
+    margin-right: 10px;
+}
+
+.intro .about .info p{
+    color: #fff;
+    font-weight: 800;
+}
+
+.intro .about .cta{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap:10px;
+}
+
+.intro .about .cta .cta-link{
+    padding:10px;
+    border-radius: 10px;
+    outline: none;
+    border: none;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.intro .about .cta .started{
+    background-color: #2DD4BF;
+    color: #fff;
+}
+
+.intro .about .cta button.demo{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    background: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+}
