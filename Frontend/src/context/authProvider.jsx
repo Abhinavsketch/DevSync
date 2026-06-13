@@ -35,7 +35,19 @@ export const AuthProvider = ({children})=>{
     },[])
 
     useEffect(()=>{
-        instance.interceptors.request.use()
+        const interceptorId = instance.interceptors.request.use((config)=>{
+            if(accessToken){
+                config.headers.Authorization = `Bearer ${accessToken}`
+            }
+
+            return config
+        },(error)=>{
+            return Promise.reject(error)
+        })
+
+        return ()=>{
+            instance.interceptors.request.eject(interceptorId)
+        }
     },[accessToken])
 
     const register = async (credential)=>{

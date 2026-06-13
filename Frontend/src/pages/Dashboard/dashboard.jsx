@@ -22,9 +22,9 @@ const Dashboard = ()=>{
             <h1>
                 This is Dashboard
             </h1>
+            {error && <p>{error}</p>}
             <button onClick={logoutUser}>LogOut</button>
         </div>
     )
 }
-
 export default Dashboard
