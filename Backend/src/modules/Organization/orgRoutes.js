@@ -1,13 +1,14 @@
 const express = require("express")
 const {createController,getController,ownerController,singleOrganizationController,addMemberController} = require("./orgController.js")
 const authMiddleWare = require("../Authentication/authmiddleware.js")
+const {organizationMiddleware,organizationOwnerMiddleware} = require("./organizationMiddleware.js")
 
 const router = express.Router()
 
 router.post("/create",authMiddleWare,createController)
 router.get("/getorganization",authMiddleWare,getController)
 router.get("/ownorganization",authMiddleWare,ownerController)
-router.get("/:id",singleOrganizationController)
-router.post("/:id/addMember",authMiddleWare,addMemberController)
+router.get("/:id",authMiddleWare,organizationMiddleware,singleOrganizationController)
+router.post("/:id/addMember",authMiddleWare,organizationMiddleware,organizationOwnerMiddleware,addMemberController)
 
 module.exports = router

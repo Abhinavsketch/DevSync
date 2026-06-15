@@ -91,19 +91,8 @@ const ownerController = async (req,res)=>{
 
 const singleOrganizationController = async (req,res)=>{
     try{
-        const id = req.params.id
-        if(!id){
-            return res.status(400).json({
-                message:"No Data Found"
-            })
-        }
 
-        const org = await orgModel.findById(id).populate("members").populate("teams")
-        if(!org){
-            return res.status(400).json({
-                message:"No Data Found"
-            })
-        }
+        const org = await req.organization.populate("members teams")
 
         res.status(200).json({
             message:"Organization Found",
@@ -120,27 +109,23 @@ const singleOrganizationController = async (req,res)=>{
 
 const addMemberController = async (req,res)=>{
     try{
-        const id = req.params.id
         const {email} = req.body
 
         const user = await userModel.findOne({email})
         if(!user){
-            return res.status(401).json({
+            return res.status(404).json({
                 message:"User not found"
             })
         }
 
-        const org = await orgModel.findById(id)
-        if(!org){
-            return res.status(401).json({
-                message:"Organization Not Found"
-            })
-        }
+        const org = req.organization
 
-        const duplicate = org.members.includes(user._id)
+        const duplicate = org.members.some(
+            member => member.toString() === user.id.toString()
+        )
         if(duplicate){
-            return res.status(401).json({
-                message:"User Already Exits in this organization"
+            return res.status(409).json({
+                message:"User Already Exists in this organization"
             })
         }
 
@@ -149,7 +134,7 @@ const addMemberController = async (req,res)=>{
         await org.save()
 
         res.status(200).json({
-            message:"User Successfull Created",
+            message:"User Successfully Added",
             org
         })
 
