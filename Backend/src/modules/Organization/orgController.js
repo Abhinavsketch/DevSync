@@ -45,11 +45,6 @@ const getController = async (req,res)=>{
 
         const orgList = await orgModel.find({members:user});
 
-        if(orgList.length === 0){
-            return res.status(400).json({
-                message:"Organization not found"
-            })
-        }
 
         res.status(200).json({
             message:"Organization Found",
