@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const interceptorId = instance.interceptors.request.use(
       (config) => {
-        if (accessToken) {
+        if (accessToken && !config.headers.Authorization) {
           config.headers.Authorization = `Bearer ${accessToken}`;
         }
 
