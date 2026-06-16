@@ -1,5 +1,4 @@
 const express = require("express");
-const orgModule = require("../Organization/orgModels.js");
 const teamModel = require("../Team/teamModel.js");
 const projectModel = require("../Projects/projectModel.js");
 const taskModel = require("../Tasks/taskModel.js");
@@ -7,21 +6,7 @@ const activityModel = require("../ActivityLog/activityLogModel.js");
 
 const totalteamController = async (req, res) => {
   try {
-    const orgId = req.params.id;
-    if (!orgId) {
-      return res.status(400).json({
-        message: "Organization ID not found",
-      });
-    }
-
-    const organization = await orgModule.findById(orgId);
-    if (!organization) {
-      return res.status(400).json({
-        message: "Organization not found",
-      });
-    }
-
-    const totalCount = organization.teams.length;
+    const totalCount = req.organization.teams.length;
 
     res.status(200).json({
       message: "Total Team Found",
@@ -36,19 +21,7 @@ const totalteamController = async (req, res) => {
 
 const totalProjectController = async (req, res) => {
   try {
-    const orgId = req.params.id;
-    if (!orgId) {
-      return res.status(400).json({
-        message: "Organization ID not found",
-      });
-    }
-
-    const organization = await orgModule.findById(orgId).populate("teams");
-    if (!organization) {
-      return res.status(400).json({
-        message: "Organization not found",
-      });
-    }
+    const organization = await req.organization.populate("teams");
 
     let totalProjects = 0;
 
@@ -69,12 +42,7 @@ const totalProjectController = async (req, res) => {
 
 const totaltaskController = async (req, res) => {
   try {
-    const orgId = req.params.id;
-    if (!orgId) {
-      return res.status(400).json({
-        message: "Organization Id is not found",
-      });
-    }
+    const orgId = req.organization._id;
 
     const teams = await teamModel.find({
       organization: orgId,
@@ -125,12 +93,7 @@ const totaltaskController = async (req, res) => {
 
 const totaltodoController = async (req, res) => {
   try {
-    const orgId = req.params.id;
-    if (!orgId) {
-      return res.status(400).json({
-        message: "Organization Id not found",
-      });
-    }
+    const orgId = req.organization._id;
 
     const team = await teamModel.find({
       organization: orgId,
@@ -179,12 +142,7 @@ const totaltodoController = async (req, res) => {
 
 const totalprogressController = async (req, res) => {
   try {
-    const orgId = req.params.id;
-    if (!orgId) {
-      return res.status(400).json({
-        message: "Organization Id is not found",
-      });
-    }
+    const orgId = req.organization._id;
 
     const teams = await teamModel.find({ organization: orgId });
     if (teams.length === 0) {
@@ -230,12 +188,7 @@ const totalprogressController = async (req, res) => {
 
 const totalreviewController = async (req, res) => {
   try {
-    const orgId = req.params.id;
-    if (!orgId) {
-      return res.status(400).json({
-        message: "Organization Id is not found",
-      });
-    }
+    const orgId = req.organization._id;
 
     const teams = await teamModel.find({ organization: orgId });
     if (teams.length === 0) {
@@ -281,12 +234,7 @@ const totalreviewController = async (req, res) => {
 
 const totaldoneController = async (req, res) => {
   try {
-    const orgId = req.params.id;
-    if (!orgId) {
-      return res.status(400).json({
-        message: "Organization Id is not found",
-      });
-    }
+    const orgId = req.organization._id;
 
     const teams = await teamModel.find({ organization: orgId });
     if (teams.length === 0) {
@@ -332,23 +280,9 @@ const totaldoneController = async (req, res) => {
 
 const organizationInfoController = async (req, res) => {
   try {
-    const orgId = req.params.id;
-    if (!orgId) {
-      return res.status(400).json({
-        message: "Organization Id not found",
-      });
-    }
-
-    const organization = await orgModule.findById(orgId);
-    if (!organization) {
-      return res.status(404).json({
-        message: "Organization not found",
-      });
-    }
-
     res.status(200).json({
       message: "Organization Found",
-      org: organization,
+      org: req.organization,
     });
   } catch (error) {
     res.status(500).json({
@@ -359,12 +293,7 @@ const organizationInfoController = async (req, res) => {
 
 const previewactivityController = async (req, res) => {
   try {
-    const orgId = req.params.id;
-    if (!orgId) {
-      return res.status(400).json({
-        message: "Organization Id is not found",
-      });
-    }
+    const orgId = req.organization._id;
 
     const activity = await activityModel
       .find({ organization: orgId })
@@ -392,12 +321,7 @@ const previewactivityController = async (req, res) => {
 
 const previewteamController = async (req,res)=>{
     try{
-        const orgId = req.params.id
-        if(!orgId){
-            return res.status(400).json({
-                message:"Organization Id not found"
-            })
-        }
+        const orgId = req.organization._id
 
         const team = await teamModel.find({organization:orgId}).limit(2)
         if(team.length === 0){
@@ -421,12 +345,7 @@ const previewteamController = async (req,res)=>{
 
 const previewprojectController = async (req,res)=>{
     try{
-        const orgId = req.params.id
-        if(!orgId){
-            return res.status(400).json({
-                message:"Organization Id is not found"
-            })
-        }
+        const orgId = req.organization._id
 
         const team = await teamModel.find({organization:orgId})
         if(team.length === 0){
