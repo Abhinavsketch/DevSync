@@ -1,0 +1,58 @@
+*{
+    margin:0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.navContainer{
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+}
+
+.navContainer .navlogo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navContainer .navlogo .orgLogo{
+    width:2.5rem;
+    height: 2.5rem;
+}
+
+.navContainer .navlogo h2{
+    color: #fff;
+}
+
+.navContainer .profile{
+    display: flex;
+    align-items: center;
+    gap:10px;
+}
+
+
+.navContainer .profile .nameBorder{
+    border-radius: 100%;
+    border:1px solid #fff;
+    padding:0.5rem;
+    background: linear-gradient(135deg, #2563eb, #7c3aed, #a855f7);
+}
+
+.navContainer .profile .nameBorder h3{
+    color: #fff;
+    cursor:none;
+}
+
+.navContainer .profile h4{
+    color: #fff;
+    cursor: none;
+}
+
+.navContainer .profile .profile-chevron{
+    color:#fff;
+    cursor:pointer
+}

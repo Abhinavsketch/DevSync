@@ -46,7 +46,7 @@ const Login = ()=>{
                 password:formData.password
             })
 
-            navigate("/dashboard")
+            navigate("/organization")
         }
         catch(error){
             setError(error.response?.data?.message || "Login Unsuccessful")

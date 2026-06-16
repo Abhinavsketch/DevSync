@@ -5,3 +5,12 @@ export const getOrganizations = async ()=>{
 
     return response.data
 }
+
+export const createOrganization = async (credentials)=>{
+    const response = await instance.post("/organization/create",{
+        name:credentials.name,
+        description:credentials.description
+    })
+
+    return response.data
+}
