@@ -2,12 +2,7 @@ import "./organizationCard.css"
 import { ArrowUpRight, Crown, UsersRound } from "lucide-react"
 import { motion } from "framer-motion"
 
-const OrganizationCard = ({organization,onOpen,userId})=>{
-    const displayName = organization?.name || "Organization"
-    const profileName = displayName.slice(0,2).toUpperCase()
-    const isOwner = Boolean(organization?.owner && userId) && organization.owner.toString() === userId.toString()
-    const role = userId ? (isOwner? "Owner":"Member") : "Preview"
-
+const OrganizationCard = ()=>{
     return(
         <motion.div
             className="card-container"
@@ -16,19 +11,19 @@ const OrganizationCard = ({organization,onOpen,userId})=>{
         >
             <div className="card-info">
                 <div className="card-border">
-                    <h3>{profileName}</h3>
+                    <h3>DS</h3>
                 </div>
                 <div className="des">
-                    <h2>{organization?.name || "Undefined"}</h2>
-                    <h4>{organization?.description || "Undefined Description "}</h4>
+                    <h2>DevSync HQ</h2>
+                    <h4>Main workspace for product planning and team collaboration.</h4>
                 </div>
             </div>
             <div className="card-about">
-                <h3><UsersRound size={17}/>{organization?.members?.length || 0} Members</h3>
-                <h4><Crown size={14}/>{role}</h4>
+                <h3><UsersRound size={17}/>0 Members</h3>
+                <h4><Crown size={14}/>Preview</h4>
             </div>
             <div className="open-button">
-                <button type="button" onClick={() => onOpen?.(organization)}>
+                <button type="button">
                     Open Organization <ArrowUpRight size={17}/>
                 </button>
             </div>

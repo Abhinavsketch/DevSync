@@ -1,63 +1,66 @@
-import { useState, useEffect } from "react";
-import { getOrganizations } from "../../api/organizationApi";
 import DashNav from "../../components/layout/Dashboard Navbar/dashNav";
 import "./organization.css"
 import OrganizationCard from "../../components/layout/OrganizationCard/organizationCard";
 import { motion } from "framer-motion";
 import { ArrowRight, Building2, FolderKanban, Plus, Search, ShieldCheck, Sparkles, UsersRound, Zap } from "lucide-react";
-
-const previewOrganizations = [
-  {
-    _id: "preview-1",
-    name: "DevSync HQ",
-    description: "Main workspace for product planning and team collaboration.",
-    members: ["1", "2", "3", "4", "5"],
-  },
-  {
-    _id: "preview-2",
-    name: "Frontend Guild",
-    description: "Design systems, dashboards, auth screens and polish work.",
-    members: ["1", "2", "3"],
-  },
-  {
-    _id: "preview-3",
-    name: "Backend Core",
-    description: "APIs, authorization, sessions and workspace data flow.",
-    members: ["1", "2", "3", "4"],
-  },
-];
+import { useState } from "react";
+import { createOrganization } from "../../api/organizationApi";
 
 const Organization = () => {
-  const [organizations, setOrganizations] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-  });
 
-  useEffect(()=>{
-    const loadOrganization = async ()=>{
-        try{
-            setError("")
-            setLoading(true)
-            const data = await getOrganizations()
-            setOrganizations(data.orgList || [])
-        }
-        catch(error){
-            setError(error.response?.data?.message || "Failed to Load Organization")
-        }
-        finally{
-            setLoading(false)
-        }
+  const [organizations,setOrganizations] = useState([])
 
+  const [formData,setFormData] = useState({
+    name:"",
+    description:""
+  })
+
+  const [showForm,setShowForm] = useState(false)
+
+  const [error,setError] = useState("")
+  const [creating,setCreating] = useState(false)
+
+  const handleChange = (event)=>{
+    const {name,value} = event.target
+
+    setFormData((previous)=>({
+      ...previous,
+      [name]:value
+    }))
+  }
+
+  const handleCreateOrganization = async (e)=>{
+    e.preventDefault()
+    try{
+      setError("")
+      if(!formData.name.trim() || !formData.description.trim()){
+        setError("Fill All Fields To Create Organization")
+        return
+      }
+
+      setCreating(true)
+
+     const org =  await createOrganization({
+        name:formData.name,
+        description:formData.description
+      })
+
+      setOrganizations((previous)=>([org.organization,...previous]))
+
+      setFormData({
+        name:"",
+        description:""
+      })
+
+      setShowForm(false)
     }
-
-    loadOrganization()
-  },[])
-
-  const visibleOrganizations = organizations.length > 0 ? organizations : previewOrganizations;
+    catch(error){
+      setError(error.response?.data?.message || "Something Went Wrong")
+    }
+    finally{
+      setCreating(false)
+    }
+  }
 
   return (
     <div className="org-container">
@@ -92,7 +95,7 @@ const Organization = () => {
               <p>Create or select a workspace to continue building with your team.</p>
             </div>
             <div className="create-button">
-              <button type="button" onClick={() => setShowForm((current) => !current)}>
+              <button type="button">
                 <Plus size={18}/> Create Organization
               </button>
             </div>
@@ -101,12 +104,12 @@ const Organization = () => {
           <div className="org-stats">
             <div>
               <Building2 size={20}/>
-              <span>{organizations.length}</span>
+              <span>00</span>
               <p>Real workspaces</p>
             </div>
             <div>
               <UsersRound size={20}/>
-              <span>{visibleOrganizations.reduce((total, org) => total + (org?.members?.length || 0), 0)}</span>
+              <span>00</span>
               <p>Visible members</p>
             </div>
             <div>
@@ -125,61 +128,47 @@ const Organization = () => {
             </div>
             <div className="toolbar-pill">
               <Zap size={16}/>
-              <span>{loading ? "Syncing workspaces" : "Workspace view ready"}</span>
+              <span>Workspace view ready</span>
             </div>
           </div>
 
-          {error && <p className="org-error">{error}</p>}
-
-          {showForm && (
-            <motion.div
-              className="create-org-panel"
-              initial={{ opacity: 0, y: 18, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.32, ease: "easeOut" }}
-            >
-              <div>
-                <span className="org-kicker">New workspace</span>
-                <h2>Create organization</h2>
-                <p>This is the visual form shell. You will wire the create logic next.</p>
-              </div>
-              <div className="create-form-preview">
-                <input
-                  value={formData.name}
-                  onChange={(event) => setFormData((current) => ({ ...current, name: event.target.value }))}
-                  placeholder="Organization name"
-                />
-                <input
-                  value={formData.description}
-                  onChange={(event) => setFormData((current) => ({ ...current, description: event.target.value }))}
-                  placeholder="Short description"
-                />
-                <button type="button">Create later <ArrowRight size={17}/></button>
-              </div>
-            </motion.div>
-          )}
-
-          {loading && (
-            <div className="org-loading">
-              <span></span>
-              Loading organizations...
+          <motion.div
+            className="create-org-panel"
+            initial={{ opacity: 0, y: 18, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.32, ease: "easeOut" }}
+          >
+            <div>
+              <span className="org-kicker">New workspace</span>
+              <h2>Create organization</h2>
+              <p>This is the visual form shell. You will wire the create logic next.</p>
             </div>
-          )}
+            <form onSubmit={handleCreateOrganization} className="create-form-preview">
+              <input
+                name="name"
+                placeholder="Organization name"
+                value={formData.name}
+                onChange={handleChange}
+              />
+              <input
+                name="description"
+                placeholder="Short description"
+                value={formData.description}
+                onChange={handleChange}
+              />
+              <button type="submit">Create Organization <ArrowRight size={17}/></button>
+            </form>
+          </motion.div>
 
-          {!loading && organizations.length === 0 && (
-            <div className="empty-banner">
-              <FolderKanban size={20}/>
-              <p>No real organization loaded yet. Preview cards are shown for design only.</p>
-            </div>
-          )}
+          <div className="empty-banner">
+            <FolderKanban size={20}/>
+            <p>No real organization loaded yet. Preview cards are shown for design only.</p>
+          </div>
 
         <div className="org-card">
-            {visibleOrganizations.map((organization, index) => (
-              <OrganizationCard
-                key={organization._id || organization.name || index}
-                organization={organization}
-              />
-            ))}
+          <OrganizationCard/>
+          <OrganizationCard/>
+          <OrganizationCard/>
         </div>
         </section>
       </div>
