@@ -12,11 +12,11 @@ const Navbar = ()=>{
                 <span className="name">DevSync</span>
             </div>
             <div className="features">
-                <a href="">Features</a>
-                <a href="">WorkFlow</a>
-                <a href="">Pricing</a>
-                <a href="">Product</a>
-                <a href="">Resources</a>
+                <a href="#features">Features</a>
+                <a href="#workflow">WorkFlow</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#product">Product</a>
+                <a href="#resources">Resources</a>
             </div>
             <div className="cta">
                 <Link to="/login" className="login cta-link">Login</Link>

@@ -4,62 +4,332 @@
     box-sizing: border-box;
 }
 
-.intro{
+.landing main > .intro{
     height: 100%;
+    min-height: calc(100vh - 84px);
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(360px, 1.05fr);
+    align-items: center;
+    gap: 3.5rem;
+    padding: 2.5rem 0 4rem;
 }
 
-.intro .about{
-    padding:20px;
+.landing main > .intro .about{
     display: flex;
     align-items: start;
     justify-content:center ;
     height: 100%;
     flex-direction: column;
-    gap: 10px;
+    gap: 1.25rem;
 }
 
-.intro .about .heading h2{
-    color: white;
-    font-size: 3rem;
-}
-
-.intro .about .heading h2 span{
-    color:aqua;
-    margin-right: 10px;
-}
-
-.intro .about .info p{
-    color: #fff;
+.landing main > .intro .about .eyebrow{
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.55rem 0.8rem;
+    border-radius: 999px;
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    background: rgba(251, 191, 36, 0.08);
+    color: #fde68a;
+    font-size: 0.88rem;
     font-weight: 800;
+    box-shadow: 0 0 28px rgba(251, 191, 36, 0.08);
 }
 
-.intro .about .cta{
+.landing main > .intro .about .heading h2{
+    color: #f8fafc;
+    font-size: clamp(3.4rem, 8vw, 6.9rem);
+    line-height: 0.92;
+    letter-spacing: -0.08em;
+    font-weight: 900;
+}
+
+.landing main > .intro .about .heading h2 span{
+    background: linear-gradient(135deg, #fbbf24, #fb7185, #22d3ee);
+    background-clip: text;
+    color: transparent;
+    margin-right: 0.18em;
+    text-shadow: none;
+}
+
+.landing main > .intro .about .info p{
+    max-width: 35rem;
+    color: #94a3b8;
+    font-size: 1.08rem;
+    line-height: 1.75;
+    font-weight: 700;
+}
+
+.landing main > .intro .about .cta{
     display: flex;
     align-items: center;
     justify-content: center;
-    gap:10px;
+    gap:0.9rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
 }
 
-.intro .about .cta .cta-link{
-    padding:10px;
-    border-radius: 10px;
+.landing main > .intro .about .cta .cta-link{
+    min-height: 3rem;
+    padding:0.85rem 1.1rem;
+    border-radius: 14px;
     outline: none;
     border: none;
     font-weight: 800;
     cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-.intro .about .cta .started{
-    background-color: #2DD4BF;
+.landing main > .intro .about .cta .started{
+    background: linear-gradient(135deg, #fbbf24, #fb7185, #22d3ee);
     color: #fff;
+    box-shadow: 0 1rem 2.6rem rgba(251, 113, 133, 0.22);
 }
 
-.intro .about .cta button.demo{
+.landing main > .intro .about .cta .started:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 1.2rem 3rem rgba(251, 113, 133, 0.28);
+}
+
+.landing main > .intro .about .cta button.demo{
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
-    background: transparent;
-    border: 1px solid #fff;
-    color: #fff;
+    gap: 0.55rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    color: #e2e8f0;
+}
+
+.landing main > .intro .about .cta button.demo:hover{
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(251, 191, 36, 0.28);
+}
+
+.landing main > .intro .hero-preview{
+    position: relative;
+    min-height: 32rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1200px;
+}
+
+.landing main > .intro .hero-preview::before{
+    content: "";
+    position: absolute;
+    width: 26rem;
+    height: 26rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(251, 113, 133, 0.2), rgba(34, 211, 238, 0.2));
+    filter: blur(18px);
+}
+
+.landing main > .intro .hero-orbit{
+    position: absolute;
+    width: min(100%, 31rem);
+    aspect-ratio: 1;
+    opacity: 0.42;
+    pointer-events: none;
+}
+
+.landing main > .intro .hero-orbit circle,
+.landing main > .intro .hero-orbit path{
+    fill: none;
+    stroke: rgba(251, 191, 36, 0.24);
+    stroke-width: 1;
+}
+
+.landing main > .intro .hero-orbit circle:nth-child(2){
+    stroke: rgba(34, 211, 238, 0.26);
+}
+
+.landing main > .intro .hero-orbit path{
+    stroke: rgba(255, 255, 255, 0.18);
+    stroke-dasharray: 8 12;
+}
+
+.landing main > .intro .preview-card{
+    position: relative;
+    z-index: 1;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background:
+        radial-gradient(circle at top right, rgba(251, 191, 36, 0.09), transparent 14rem),
+        linear-gradient(145deg, rgba(15, 23, 42, 0.88), rgba(3, 7, 18, 0.94));
+    box-shadow: 0 26px 90px rgba(0, 0, 0, 0.32);
+    backdrop-filter: blur(20px);
+    transform-style: preserve-3d;
+}
+
+.landing main > .intro .main-card{
+    width: min(100%, 27rem);
+    padding: 1.4rem;
+    border-radius: 24px;
+}
+
+.landing main > .intro .preview-header{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.landing main > .intro .preview-header p,
+.landing main > .intro .preview-grid p,
+.landing main > .intro .floating-card p{
+    color: #94a3b8;
+    font-size: 0.86rem;
+    font-weight: 700;
+}
+
+.landing main > .intro .preview-header h3{
+    margin-top: 0.35rem;
+    color: #f8fafc;
+    font-size: 1.45rem;
+    letter-spacing: -0.05em;
+}
+
+.landing main > .intro .preview-header span{
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    color: #fde68a;
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.18);
+    font-size: 0.75rem;
+    font-weight: 900;
+}
+
+.landing main > .intro .progress-bar{
+    height: 0.72rem;
+    margin: 2rem 0;
+    border-radius: 999px;
+    background: rgba(148, 163, 184, 0.12);
+    overflow: hidden;
+}
+
+.landing main > .intro .progress-bar span{
+    display: block;
+    width: 72%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(135deg, #fbbf24, #fb7185, #22d3ee);
+    box-shadow: 0 0 26px rgba(251, 191, 36, 0.28);
+    animation: progress-glow 2.8s ease-in-out infinite;
+}
+
+.landing main > .intro .preview-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.85rem;
+}
+
+.landing main > .intro .preview-grid div{
+    padding: 1rem;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.landing main > .intro .preview-grid h4{
+    color: #ffffff;
+    font-size: 1.4rem;
+    letter-spacing: -0.05em;
+}
+
+.landing main > .intro .floating-card{
+    position: absolute;
+    width: 16rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 1rem;
+    border-radius: 18px;
+    color: #e2e8f0;
+}
+
+.landing main > .intro .floating-card::before,
+.landing main > .intro .main-card::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+    opacity: 0;
+    transform: translateX(-50%);
+    transition: opacity 0.25s ease, transform 0.6s ease;
+    pointer-events: none;
+}
+
+.landing main > .intro .floating-card:hover::before,
+.landing main > .intro .main-card:hover::before{
+    opacity: 1;
+    transform: translateX(50%);
+}
+
+.landing main > .intro .floating-card svg{
+    color: #fbbf24;
+    flex-shrink: 0;
+}
+
+.landing main > .intro .floating-card h4{
+    margin-bottom: 0.25rem;
+    color: #f8fafc;
+    font-size: 0.95rem;
+}
+
+.landing main > .intro .team-card{
+    top: 3.4rem;
+    right: 0;
+}
+
+.landing main > .intro .chat-card{
+    left: 0;
+    bottom: 3.6rem;
+}
+
+@keyframes progress-glow{
+    0%,
+    100%{
+        filter: saturate(1);
+    }
+    50%{
+        filter: saturate(1.35) brightness(1.1);
+    }
+}
+
+@media (max-width: 900px){
+    .landing main > .intro{
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding-top: 1.5rem;
+    }
+
+    .landing main > .intro .hero-preview{
+        min-height: 28rem;
+    }
+}
+
+@media (max-width: 560px){
+    .landing main > .intro .about .heading h2{
+        font-size: clamp(3rem, 17vw, 4.6rem);
+    }
+
+    .landing main > .intro .hero-preview{
+        min-height: auto;
+        display: block;
+    }
+
+    .landing main > .intro .floating-card{
+        position: relative;
+        width: 100%;
+        inset: auto;
+        margin-top: 0.9rem;
+    }
+
+    .landing main > .intro .preview-grid{
+        grid-template-columns: 1fr;
+    }
 }
