@@ -3,17 +3,27 @@ import "./organization.css"
 import OrganizationCard from "../../components/layout/OrganizationCard/organizationCard";
 import { motion } from "framer-motion";
 import { ArrowRight, Building2, FolderKanban, Plus, Search, ShieldCheck, Sparkles, UsersRound, Zap } from "lucide-react";
-import { useState } from "react";
+import { useState,useEffect} from "react";
 import { createOrganization } from "../../api/organizationApi";
+import { useContext } from "react";
+import {AuthContext} from "../../context/authContext"
+import { getOrganizations } from "../../api/organizationApi";
+import {useNavigate} from "react-router-dom"
+
 
 const Organization = () => {
 
+  const navigate = useNavigate()
+
+  const {user} = useContext(AuthContext)
   const [organizations,setOrganizations] = useState([])
 
   const [formData,setFormData] = useState({
     name:"",
     description:""
   })
+
+  const [fetchError,setFetchError] = useState("")
 
   const [showForm,setShowForm] = useState(false)
 
@@ -62,6 +72,32 @@ const Organization = () => {
     }
   }
 
+  useEffect(()=>{
+    const orgList = async ()=>{
+      setFetchError("")
+      try{
+        const res = await getOrganizations()
+        setOrganizations(res.orgList)
+
+      }
+      catch(error){
+        setFetchError(error.response?.data?.message)
+      }
+    }
+
+    orgList()
+  },[])
+
+  const totalMembers = organizations.reduce((total,organization)=>(total + (organization?.members?.length || 0)),0)
+
+  const handleOpenOrganization = (orgId)=>{
+    if(!orgId){
+      return
+    }
+
+    navigate(`/organization/${orgId}`)
+  }
+
   return (
     <div className="org-container">
       <motion.div
@@ -95,7 +131,7 @@ const Organization = () => {
               <p>Create or select a workspace to continue building with your team.</p>
             </div>
             <div className="create-button">
-              <button type="button">
+              <button type="button" onClick={()=>{setShowForm(previous => !previous)}}>
                 <Plus size={18}/> Create Organization
               </button>
             </div>
@@ -104,12 +140,12 @@ const Organization = () => {
           <div className="org-stats">
             <div>
               <Building2 size={20}/>
-              <span>00</span>
+              <span>{organizations.length}</span>
               <p>Real workspaces</p>
             </div>
             <div>
               <UsersRound size={20}/>
-              <span>00</span>
+              <span>{totalMembers}</span>
               <p>Visible members</p>
             </div>
             <div>
@@ -132,7 +168,7 @@ const Organization = () => {
             </div>
           </div>
 
-          <motion.div
+          {showForm && <motion.div
             className="create-org-panel"
             initial={{ opacity: 0, y: 18, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -141,9 +177,9 @@ const Organization = () => {
             <div>
               <span className="org-kicker">New workspace</span>
               <h2>Create organization</h2>
-              <p>This is the visual form shell. You will wire the create logic next.</p>
+              <p>Create Your New Organization and Start Working.</p>
             </div>
-            <form onSubmit={handleCreateOrganization} className="create-form-preview">
+             <form onSubmit={handleCreateOrganization} className="create-form-preview">
               <input
                 name="name"
                 placeholder="Organization name"
@@ -156,19 +192,21 @@ const Organization = () => {
                 value={formData.description}
                 onChange={handleChange}
               />
-              <button type="submit">Create Organization <ArrowRight size={17}/></button>
+              {error && <p className="org-error">{error}</p>}
+              <button type="submit" disabled={creating}>{creating?"Creating...":"Create Organization"} <ArrowRight size={17}/></button>
             </form>
-          </motion.div>
+          </motion.div>}
 
-          <div className="empty-banner">
+          {organizations.length === 0 && <div className="empty-banner">
             <FolderKanban size={20}/>
-            <p>No real organization loaded yet. Preview cards are shown for design only.</p>
-          </div>
-
+            <p>No real organization loaded yet.Create Organization and Get Started.</p>
+          </div>}
+          
         <div className="org-card">
-          <OrganizationCard/>
-          <OrganizationCard/>
-          <OrganizationCard/>
+          {fetchError && <p className="org-error">{fetchError}</p>}
+          {organizations.map((organization)=>(
+            <OrganizationCard key={organization._id} organization={organization} userId={user?._id} onOpen={handleOpenOrganization}/>
+          ))}
         </div>
         </section>
       </div>
