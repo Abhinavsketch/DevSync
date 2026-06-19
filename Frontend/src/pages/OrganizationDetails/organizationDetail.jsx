@@ -1,7 +1,6 @@
 import "./organizationDetail.css"
 import { useParams } from "react-router-dom"
 import { useState,useEffect,useContext,useCallback } from "react"
-import { singleOrganization } from "../../api/organizationApi"
 import DashNav from "../../components/layout/Dashboard Navbar/dashNav"
 import { motion } from "framer-motion"
 import {
@@ -28,30 +27,29 @@ import {
 } from "lucide-react"
 import {AuthContext} from "../../context/authContext"
 import { useNavigate } from "react-router-dom"
-
+import { getDashboardOverview } from "../../api/dashboardApi"
 
 const OrganizationDetail = ()=>{
     const params = useParams()
-    const [organization,setOrganization] = useState(null)
+    const [overview,setOverview] = useState(null)
     const [error,setError]  = useState("")
     const [loading,setLoading] = useState(true)
     const {user} = useContext(AuthContext)
-    const isOwner = organization?.owner?._id?.toString() === user?._id?.toString()
     const navigate = useNavigate()
 
     const headbacktoOrganization = ()=>{
         navigate("/organization")
     }
 
-    const fetchorganization = useCallback(async ()=>{
+    const fetchOverview = useCallback(async ()=>{
             setError("")
             setLoading(true)
             try{
-                const data = await singleOrganization(params.id)
-                setOrganization(data.org)
+                const data = await getDashboardOverview(params.id)
+                setOverview(data)
             }
             catch(error){
-                setError(error.response?.data?.message)
+                setError(error.response?.data?.message || "Organization not found")
             }
             finally{
                 setLoading(false)
@@ -60,8 +58,8 @@ const OrganizationDetail = ()=>{
 
 
     useEffect(()=>{
-        fetchorganization()
-    },[fetchorganization])
+        fetchOverview()
+    },[fetchOverview])
 
     if(loading){
         return (
@@ -89,13 +87,13 @@ const OrganizationDetail = ()=>{
                 <p>{error}</p>
                 <div className="detail-state-actions">
                     <button type="button" onClick={headbacktoOrganization}><ArrowLeft size={17}/> All organizations</button>
-                    <button type="button" className="detail-retry-button" onClick={fetchorganization}><RefreshCw size={17}/> Try again</button>
+                    <button type="button" className="detail-retry-button" onClick={fetchOverview}><RefreshCw size={17}/> Try again</button>
                 </div>
             </div>
         )
     }
 
-    if(!organization){
+    if(!overview){
         return (
             <div className="detail-state-screen detail-error-screen">
                 <div className="detail-error-icon"><Building2 size={30}/></div>
@@ -106,13 +104,21 @@ const OrganizationDetail = ()=>{
         )
     }
 
+    const organization = overview.organization
+    const stats = overview.stats
+    const previews = overview.previews
+    const activityPreview = previews.activities ?? []
 
-    const displayName = organization.name || "DevSync Workspace"
+    const displayName = organization.name ?? "DevSync Workspace"
     const organizationInitials = displayName.slice(0,2).toUpperCase()
-    const memberCount = organization.members?.length || 0
-    const teamCount = organization.teams?.length || 0
-    const ownerName = organization.owner?.name || "Workspace owner"
+    const memberCount = organization.memberCount ?? 0
+    const teamCount = stats.totalTeams ?? 0
+    const ownerName = organization.owner?.name ?? "Workspace owner"
+    const isOwner = organization?.owner?._id?.toString() === user?._id?.toString()
+    const taskStats = stats.taskStats
 
+    const openTaskCount = Math.max(0,taskStats.total - taskStats.done)
+    const completionPercentage = taskStats.total === 0? 0: Math.round((taskStats.done/taskStats.total)*100)
     return (
         <div className="detail-page">
             <motion.div
@@ -190,7 +196,7 @@ const OrganizationDetail = ()=>{
                             <p className="detail-description">{organization.description || "A focused workspace for your teams, projects, and product delivery."}</p>
                             <div className="detail-meta-row">
                                 <span><ShieldCheck size={16}/> Owned by {ownerName}</span>
-                                <span><Building2 size={16}/> ID {organization._id}</span>
+                                <span><Building2 size={16}/> ID {organization.id}</span>
                                 <span>Role: {isOwner?"Owner":"Member"}</span>
                             </div>
                         </div>
@@ -224,14 +230,14 @@ const OrganizationDetail = ()=>{
                         <motion.article variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}>
                             <div className="detail-stat-icon amber"><FolderKanban size={20}/></div>
                             <span>Projects</span>
-                            <strong>--</strong>
-                            <p><Clock3 size={14}/> Integration pending</p>
+                            <strong>{stats.totalProjects}</strong>
+                            <p><Clock3 size={14}/> Across all teams</p>
                         </motion.article>
                         <motion.article variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}>
                             <div className="detail-stat-icon rose"><ListTodo size={20}/></div>
                             <span>Open tasks</span>
-                            <strong>--</strong>
-                            <p><Clock3 size={14}/> Integration pending</p>
+                            <strong>{openTaskCount}</strong>
+                            <p><Clock3 size={14}/> Awaiting completion</p>
                         </motion.article>
                     </motion.section>
 
@@ -251,7 +257,12 @@ const OrganizationDetail = ()=>{
                             </div>
                             <div className="detail-chart-preview">
                                 <div className="detail-chart-copy">
-                                    <div className="detail-chart-ring"><span>0%</span></div>
+                                    <div
+                                        className="detail-chart-ring"
+                                        style={{ "--completion": `${completionPercentage}%` }}
+                                    >
+                                        <span>{completionPercentage}%</span>
+                                    </div>
                                     <div>
                                         <strong>Connect project data</strong>
                                         <p>Your project velocity and completion rate will appear here.</p>

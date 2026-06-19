@@ -560,7 +560,10 @@
     display: grid;
     place-items: center;
     border-radius: 50%;
-    background: conic-gradient(#fbbf24 0 2deg, rgba(255, 255, 255, 0.06) 2deg 360deg);
+    background: conic-gradient(
+        #fbbf24 0 var(--completion, 0%),
+        rgba(255, 255, 255, 0.06) var(--completion, 0%) 100%
+    );
     box-shadow: 0 0 30px rgba(251, 191, 36, 0.1);
 }
 
