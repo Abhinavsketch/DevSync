@@ -92,7 +92,7 @@ const ownerController = async (req,res)=>{
 const singleOrganizationController = async (req,res)=>{
     try{
 
-        const org = await req.organization.populate("members teams")
+        const org = await req.organization.populate("members teams owner")
 
         res.status(200).json({
             message:"Organization Found",
