@@ -381,6 +381,111 @@ const previewprojectController = async (req,res)=>{
     }
 }
 
+const overviewController = async (req,res)=>{
+  try{
+    const organization = req.organization
+    const organizationId = organization._id
+    await organization.populate("owner","name email")
+
+    
+
+
+    const teams = await teamModel.find({organization:organizationId}).select("_id name members projects createdAt").sort({createdAt:-1}).lean()
+
+    const teamPreview = teams.slice(0,2)
+
+    const totalTeams = teams.length
+
+
+    const teamIds = teams.map((team)=>{
+      return team._id
+    })
+
+    const projects = await projectModel.find({
+      team:{
+        $in:teamIds
+      }
+    }).select("_id title description status deadline team createdAt").sort({createdAt:-1}).lean()
+
+    const projectPreview = projects.slice(0,2)
+
+    const totalProjects = projects.length
+
+    const projectIds = projects.map((project)=>{
+      return project._id
+    })
+
+    const taskStats = await taskModel.aggregate([{$match:{project:{
+      $in:projectIds
+    }}},{
+      $group:{
+        _id:"$status",
+        count: {$sum:1}
+      }
+    }])
+
+    const taskCounts = {
+      total:0,
+      todo:0,
+      inProgress:0,
+      review:0,
+      done:0
+    }
+
+    const statusKeyMap = {
+      "to-do": "todo",
+      "in-progress": "inProgress",
+      "review": "review",
+      "done": "done"
+    }
+
+    taskStats.forEach((item)=>{
+      taskCounts.total += item.count
+      const key = statusKeyMap[item._id]
+      if(!key){
+        return
+      }
+
+      
+      taskCounts[key] = item.count
+
+    })
+
+    const activityPreview = await activityModel.find({organization:organizationId}).select("actor project entityType action message createdAt").populate("actor" ,"name email").populate("project" ,"title").sort({createdAt:-1}).limit(5).lean()
+
+    const organizationSummary = {
+      id:organizationId,
+      name:organization.name,
+      description:organization.description,
+      owner:organization.owner,
+      memberCount:organization.members.length,
+      createdAt : organization.createdAt
+    }
+
+    res.status(200).json({
+      message:"Organization Details",
+      organization:organizationSummary,
+      stats:{
+        totalTeams : totalTeams,
+        totalProjects:totalProjects,
+        taskStats:taskCounts
+      },
+      previews:{
+        teams:teamPreview,
+        projects:projectPreview,
+        activities:activityPreview
+      }
+    })
+
+    
+  }
+  catch(error){
+    res.status(500).json({
+      message:error.message
+    })
+  }
+}
+
 module.exports = {
   totalteamController,
   totalProjectController,
@@ -392,5 +497,6 @@ module.exports = {
   organizationInfoController,
   previewactivityController,
   previewteamController,
-  previewprojectController
+  previewprojectController,
+  overviewController
 };
