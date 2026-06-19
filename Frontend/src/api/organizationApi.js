@@ -14,3 +14,9 @@ export const createOrganization = async (credentials)=>{
 
     return response.data
 }
+
+export const singleOrganization = async (id)=>{
+    const response = await instance.get(`/organization/${id}`)
+
+    return response.data
+}

@@ -4,6 +4,8 @@ import Register from "../pages/Register/register"
 import Landing from "../pages/landing/Landing"
 import Organization from "../pages/Organization/organization"
 import ProtectedRoute from "./ProtectedRoutes"
+import OrganizationDetail from "../pages/OrganizationDetails/organizationDetail"
+
 
 const AppRoutes = ()=>{
     return(
@@ -16,6 +18,12 @@ const AppRoutes = ()=>{
                     <Organization/>
                 </ProtectedRoute>
                 }/>
+
+            <Route path="/organization/:id" element={
+                <ProtectedRoute>
+                    <OrganizationDetail/>
+                </ProtectedRoute>
+            }/>
         </Routes>
     )
 }
