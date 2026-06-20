@@ -654,6 +654,193 @@
     font-size: 0.8rem;
 }
 
+.detail-activity-list{
+    max-height: 252px;
+    display: grid;
+    gap: 0.55rem;
+    margin-top: 1rem;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(251, 191, 36, 0.3) transparent;
+}
+
+.detail-activity-item{
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.28rem 0.75rem;
+    padding: 0.8rem 0.85rem 0.8rem 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.detail-activity-item::before{
+    content: "";
+    position: absolute;
+    top: 1rem;
+    left: 0.65rem;
+    width: 0.38rem;
+    height: 0.38rem;
+    border-radius: 50%;
+    background: #fbbf24;
+    box-shadow: 0 0 14px rgba(251, 191, 36, 0.5);
+}
+
+.detail-activity-item strong{
+    color: #e7edf6;
+    font-size: 0.74rem;
+}
+
+.detail-activity-item p{
+    grid-column: 1 / -1;
+    margin: 0;
+    color: #78869b;
+    font-size: 0.66rem;
+    font-weight: 650;
+    line-height: 1.45;
+}
+
+.detail-activity-item span,
+.detail-activity-item time{
+    color: #59667a;
+    font-size: 0.58rem;
+    font-weight: 800;
+}
+
+.detail-activity-item time{
+    grid-column: 2;
+    grid-row: 1;
+    white-space: nowrap;
+}
+
+.detail-project-list{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+    margin-top: 0.75rem;
+}
+
+.detail-project-item{
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.42rem 0.65rem;
+    padding: 0.78rem 0.85rem;
+    border: 1px solid rgba(34, 211, 238, 0.1);
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(34, 211, 238, 0.045), rgba(251, 113, 133, 0.035));
+}
+
+.detail-project-item strong{
+    overflow: hidden;
+    color: #e7edf6;
+    font-size: 0.74rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.detail-project-item span{
+    padding: 0.2rem 0.48rem;
+    border-radius: 999px;
+    color: #67e8f9;
+    background: rgba(34, 211, 238, 0.08);
+    font-size: 0.55rem;
+    font-weight: 900;
+    text-transform: capitalize;
+}
+
+.detail-project-item time{
+    grid-column: 1 / -1;
+    color: #64748b;
+    font-size: 0.58rem;
+    font-weight: 750;
+}
+
+.detail-task-breakdown{
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.55rem;
+    margin-top: 0.75rem;
+}
+
+.detail-task-breakdown > div{
+    padding: 0.68rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.022);
+}
+
+.detail-task-breakdown span,
+.detail-task-breakdown strong{
+    display: block;
+}
+
+.detail-task-breakdown span{
+    color: #657287;
+    font-size: 0.58rem;
+    font-weight: 850;
+    text-transform: uppercase;
+}
+
+.detail-task-breakdown strong{
+    margin-top: 0.2rem;
+    color: #f8fafc;
+    font-size: 1rem;
+}
+
+.detail-task-breakdown > div:nth-child(1){ border-color: rgba(148, 163, 184, 0.1); }
+.detail-task-breakdown > div:nth-child(2){ border-color: rgba(34, 211, 238, 0.12); }
+.detail-task-breakdown > div:nth-child(3){ border-color: rgba(251, 191, 36, 0.12); }
+.detail-task-breakdown > div:nth-child(4){ border-color: rgba(34, 197, 94, 0.12); }
+
+.detail-team-list{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+    margin-top: 1rem;
+}
+
+.detail-team-item{
+    position: relative;
+    overflow: hidden;
+    min-height: 5.4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0.85rem;
+    border: 1px solid rgba(251, 191, 36, 0.1);
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at top right, rgba(251, 191, 36, 0.1), transparent 5rem),
+        rgba(255, 255, 255, 0.025);
+}
+
+.detail-team-item::before{
+    content: "";
+    position: absolute;
+    top: 0.75rem;
+    left: 0.85rem;
+    width: 1.7rem;
+    height: 0.3rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #fbbf24, #fb7185, #22d3ee);
+}
+
+.detail-team-item strong{
+    color: #e7edf6;
+    font-size: 0.74rem;
+}
+
+.detail-team-item span{
+    margin-top: 0.25rem;
+    color: #64748b;
+    font-size: 0.6rem;
+    font-weight: 750;
+}
+
 .detail-team-preview{
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
@@ -988,6 +1175,24 @@
 
     .detail-panel-heading button{
         display: none;
+    }
+
+    .detail-project-list,
+    .detail-team-list{
+        grid-template-columns: 1fr;
+    }
+
+    .detail-task-breakdown{
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .detail-activity-item{
+        grid-template-columns: 1fr;
+    }
+
+    .detail-activity-item time{
+        grid-column: 1;
+        grid-row: auto;
     }
 
     .detail-state-actions{
