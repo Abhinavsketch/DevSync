@@ -1,6 +1,6 @@
 import "./organizationDetail.css";
 import { useParams } from "react-router-dom";
-import { useState, useEffect, useContext, useCallback } from "react";
+import { useState, useEffect, useContext} from "react";
 import DashNav from "../../components/layout/Dashboard Navbar/dashNav";
 import { motion } from "framer-motion";
 import {
@@ -35,6 +35,7 @@ const projectDateFormatter = new Intl.DateTimeFormat("en-IN");
 const OrganizationDetail = () => {
   const params = useParams();
   const [overview, setOverview] = useState(null);
+  const [retry,setRetry] = useState(0)
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
@@ -44,27 +45,36 @@ const OrganizationDetail = () => {
     navigate("/organization");
   };
 
-  const fetchOverview = useCallback(async () => {
-    try {
-      const data = await getDashboardOverview(params.id);
-      setOverview(data);
-      setError("")
-    } catch (error) {
-      setError(error.response?.data?.message || "Organization not found");
-    } finally {
-      setLoading(false);
-    }
-  }, [params.id]);
 
   const handleRetry = ()=>{
     setError("")
     setLoading(true)
-    fetchOverview()
+    setRetry((previous)=>(previous + 1))
   }
 
   useEffect(() => {
-    fetchOverview();
-  }, [fetchOverview]);
+    let ignore = false;
+    getDashboardOverview(params.id).then((data)=>{
+      if(ignore){
+        return
+      }
+      setOverview(data)
+      setError("")
+    }).catch((error)=>{
+      if(ignore) {
+        return
+      }
+      setError(error.response?.data?.message || "Organization Not Found")
+    }).finally(()=>{
+      if(!ignore){
+        setLoading(false)
+      }
+    })
+
+    return ()=>{
+      ignore = true
+    }
+  }, [params.id , retry]);
 
   if (loading) {
     return (
