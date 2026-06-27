@@ -12,6 +12,7 @@ const dashboardRoutes = require("./modules/Dashboard/dashboardRoutes.js")
 const searchFilterRoutes = require("./modules/SearchAndFilter/searchFilterroutes.js")
 const notificationRoutes = require("./modules/notification/notificationRoutes.js")
 const chatRoutes = require("./modules/chats/teamChatRoutes.js")
+const inviteRoutes = require("./modules/Invitation/invitationRoutes.js")
 
 
 const app = express();
@@ -40,5 +41,6 @@ app.use("/api/dashboard",dashboardRoutes)
 app.use("/api/search",searchFilterRoutes)
 app.use("/api/notify",notificationRoutes)
 app.use("/api/chat",chatRoutes)
+app.use("/api/invitation",inviteRoutes)
 
 module.exports = app;
