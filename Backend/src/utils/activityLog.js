@@ -1,7 +1,8 @@
 const activityModel = require("../modules/ActivityLog/activityLogModel.js")
 
 const activityLogger = async ({actor,project,organization,entityType,entity,action,message,oldValue,newValue})=>{
-    await activityModel.create({
+    try{
+        await activityModel.create({
         actor,
         project,
         organization,
@@ -12,6 +13,10 @@ const activityLogger = async ({actor,project,organization,entityType,entity,acti
         oldValue,
         newValue
     })
+    }
+    catch(error){
+        console.error("activity log failed:", error.message)
+    }
 }
 
 module.exports = activityLogger

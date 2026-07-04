@@ -3,7 +3,8 @@ const {getIo} = require("../modules/realTime/socketManager.js")
 
 
 const createNotification = async ({receiver,sender,action,message,entityType,entityId,organization,read})=>{
-    const notification =  await notificationModel.create({
+    try{
+        const notification =  await notificationModel.create({
         receiver,
         sender,
         action,
@@ -18,6 +19,10 @@ const createNotification = async ({receiver,sender,action,message,entityType,ent
     io.to(`user:${notification.receiver}`).emit("receive-notification",notification)
 
     return notification
+    }
+    catch(error){
+        console.error("Notification Failed",error.message)
+    }
 
 }
 

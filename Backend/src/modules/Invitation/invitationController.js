@@ -3,6 +3,8 @@ const userModel = require("../Authentication/authModels");
 const organizationModel = require("../Organization/orgModels.js")
 const invitationModel = require("./invitationModel.js");
 const crypto = require("node:crypto")
+const activityLogger = require("../../utils/activityLog.js")
+const createNotification = require("../../services/notificationService.js")
 
 const createInvitationController = async (req, res) => {
   try {
@@ -57,6 +59,25 @@ const createInvitationController = async (req, res) => {
         token:secretToken,
         expiry:expiryDate
     })
+
+    await activityLogger({
+      actor:req.user._id,
+      organization:req.organization._id,
+      entityType:"Invitation",
+      entity:invite._id,
+      action:"INVITE_SENT",
+      message:"Invitaion Sent Successfully"
+    })
+
+    if(user){
+      await createNotification({
+        receiver:user._id,
+        sender:req.user._id,
+        action:"INVITE_RECEIVED",
+        message:`${req.user.name} invited you to ${org.name}`,
+        organization:req.organization._id
+      })
+    }
 
     res.status(201).json({
         message:"Invitation Successfully Send",
@@ -115,6 +136,23 @@ const acceptInvitationController = async(req,res)=>{
         invite.status = "accepted"
         await invite.save()
 
+        await activityLogger({
+          actor:req.user._id,
+          organization:org._id,
+          entityType:"Invitation",
+          entity:invite._id,
+          action:"INVITE_ACCEPTED",
+          message:`${req.user.name} has accepted the invitation`,
+        })
+
+        await createNotification({
+          receiver:invite.sender,
+          sender:req.user._id,
+          action:"INVITE_ACCEPTED",
+          message:`${req.user.name} has accepted your Invitation`,
+          organization:invite.organization
+        })
+
         res.status(201).json({
             message:"Invite Accepted",
             organization:org
@@ -165,6 +203,23 @@ const rejectInvitationController = async (req,res)=>{
     invite.status = "rejected"
     await invite.save()
 
+    await activityLogger({
+          actor:req.user._id,
+          organization:invite.organization,
+          entityType:"Invitation",
+          entity:invite._id,
+          action:"INVITE_REJECTED",
+          message:`${req.user.name} has rejected the invitation`,
+        })
+
+    await createNotification({
+          receiver:invite.sender,
+          sender:req.user._id,
+          action:"INVITE_REJECTED",
+          message:`${req.user.name} has rejected your Invitation`,
+          organization:invite.organization
+        })
+
     res.status(200).json({
       message:"You Rejected The Invite"
     })
@@ -192,6 +247,8 @@ const cancelInvitationController = async (req,res)=>{
       })
     }
 
+    const user = await userModel.findOne({email:invite.receiver})
+
     const org = await organizationModel.findById(invite.organization)
     if(!org){
       return res.status(404).json({
@@ -213,6 +270,25 @@ const cancelInvitationController = async (req,res)=>{
 
     invite.status = "cancelled"
     await invite.save()
+
+    await activityLogger({
+          actor:req.user._id,
+          organization:invite.organization,
+          entityType:"Invitation",
+          entity:invite._id,
+          action:"INVITE_CANCELLED",
+          message:`${req.user.name} has cancelled the invitation`,
+        })
+
+    if(user){
+      await createNotification({
+          receiver:user._id,
+          sender:invite.sender,
+          action:"INVITE_CANCELLED",
+          message:`${req.user.name} has cancelled your invitation to ${org.name}`,
+          organization:invite.organization
+        })
+    }
 
     res.status(200).json({
       message:"You SuccessFully Cancelled the Invitation"
@@ -295,4 +371,76 @@ const listOrganizationInvitesController = async (req,res)=>{
   }
 }
 
-module.exports = { createInvitationController,acceptInvitationController,rejectInvitationController,cancelInvitationController,listOrganizationInvitesController };
+const listuserInvitesController = async (req,res)=>{
+  try{
+    const email = req.user.email
+    const page = req.query.page
+    const limit = req.query.limit
+
+
+    const totalInvites = await invitationModel.countDocuments({receiver:email,status:"pending"})
+    if(!totalInvites){
+      return res.status(200).json({
+        message:"There is no invitation from any Organization",
+        invites:[]
+      })
+    }
+
+    let normalizedPage = Number.parseInt(page,10)
+    let normalizedLimit = Number.parseInt(limit,10)
+
+    if(!normalizedPage){
+      normalizedPage = 1
+    }
+
+    if(normalizedPage<1){
+      normalizedPage = 1
+    }
+
+    if(!normalizedLimit){
+      normalizedLimit = 10
+    }
+
+    if(normalizedLimit<1){
+      normalizedLimit = 10
+    }
+
+    if(normalizedLimit>50){
+      normalizedLimit = 50
+    }
+
+    const totalPages = Math.ceil(totalInvites/normalizedLimit)
+
+    if(normalizedPage>totalPages){
+      normalizedPage = totalPages
+    }
+
+    const skip = (normalizedPage -1)*normalizedLimit
+
+
+    const invites = await invitationModel.find({receiver:email,status:"pending"}).sort({createdAt:-1}).skip(skip).limit(normalizedLimit).lean()
+
+    const pagination = {
+      page:normalizedPage,
+      limit:normalizedLimit,
+      totalPages:totalPages,
+      totalInvites:totalInvites,
+      hasNextPage: normalizedPage < totalPages,
+      hasPreviousPage : normalizedPage > 1
+    }
+
+    res.status(200).json({
+      message:"All Invitation From Organization",
+      invitations:invites,
+      pagination : pagination
+    })
+
+  }
+  catch(error){
+    res.status(500).json({
+      message:error.message
+    })
+  }
+}
+
+module.exports = { createInvitationController,acceptInvitationController,rejectInvitationController,cancelInvitationController,listOrganizationInvitesController,listuserInvitesController };
