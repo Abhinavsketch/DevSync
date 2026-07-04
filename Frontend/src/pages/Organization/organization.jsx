@@ -2,96 +2,103 @@ import DashNav from "../../components/layout/Dashboard Navbar/dashNav";
 import "./organization.css"
 import OrganizationCard from "../../components/layout/OrganizationCard/organizationCard";
 import { motion } from "framer-motion";
-import { ArrowRight, Building2, FolderKanban, Plus, Search, ShieldCheck, Sparkles, UsersRound, Zap } from "lucide-react";
-import { useState,useEffect} from "react";
+import { ArrowUpRight, Asterisk, Plus, Search } from "lucide-react";
+import { useState, useEffect } from "react";
 import { createOrganization } from "../../api/organizationApi";
 import { useContext } from "react";
-import {AuthContext} from "../../context/authContext"
+import { AuthContext } from "../../context/authContext"
 import { getOrganizations } from "../../api/organizationApi";
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
+const lineReveal = {
+  hidden: { y: "115%" },
+  visible: (i) => ({
+    y: "0%",
+    transition: { duration: 0.95, ease: [0.16, 1, 0.3, 1], delay: 0.15 + i * 0.12 },
+  }),
+};
 
 const Organization = () => {
 
   const navigate = useNavigate()
 
-  const {user} = useContext(AuthContext)
-  const [organizations,setOrganizations] = useState([])
+  const { user } = useContext(AuthContext)
+  const [organizations, setOrganizations] = useState([])
 
-  const [formData,setFormData] = useState({
-    name:"",
-    description:""
+  const [formData, setFormData] = useState({
+    name: "",
+    description: ""
   })
 
-  const [fetchError,setFetchError] = useState("")
+  const [fetchError, setFetchError] = useState("")
 
-  const [showForm,setShowForm] = useState(false)
+  const [showForm, setShowForm] = useState(false)
 
-  const [error,setError] = useState("")
-  const [creating,setCreating] = useState(false)
+  const [error, setError] = useState("")
+  const [creating, setCreating] = useState(false)
 
-  const handleChange = (event)=>{
-    const {name,value} = event.target
+  const handleChange = (event) => {
+    const { name, value } = event.target
 
-    setFormData((previous)=>({
+    setFormData((previous) => ({
       ...previous,
-      [name]:value
+      [name]: value
     }))
   }
 
-  const handleCreateOrganization = async (e)=>{
+  const handleCreateOrganization = async (e) => {
     e.preventDefault()
-    try{
+    try {
       setError("")
-      if(!formData.name.trim() || !formData.description.trim()){
+      if (!formData.name.trim() || !formData.description.trim()) {
         setError("Fill All Fields To Create Organization")
         return
       }
 
       setCreating(true)
 
-     const org =  await createOrganization({
-        name:formData.name,
-        description:formData.description
+      const org = await createOrganization({
+        name: formData.name,
+        description: formData.description
       })
 
-      setOrganizations((previous)=>([org.organization,...previous]))
+      setOrganizations((previous) => ([org.organization, ...previous]))
 
       setFormData({
-        name:"",
-        description:""
+        name: "",
+        description: ""
       })
 
       setShowForm(false)
     }
-    catch(error){
+    catch (error) {
       setError(error.response?.data?.message || "Something Went Wrong")
     }
-    finally{
+    finally {
       setCreating(false)
     }
   }
 
-  useEffect(()=>{
-    const orgList = async ()=>{
+  useEffect(() => {
+    const orgList = async () => {
       setFetchError("")
-      try{
+      try {
         const res = await getOrganizations()
         setOrganizations(res.orgList)
 
       }
-      catch(error){
+      catch (error) {
         setFetchError(error.response?.data?.message)
       }
     }
 
     orgList()
-  },[])
+  }, [])
 
-  const totalMembers = organizations.reduce((total,organization)=>(total + (organization?.members?.length || 0)),0)
+  const totalMembers = organizations.reduce((total, organization) => (total + (organization?.members?.length || 0)), 0)
 
-  const handleOpenOrganization = (orgId)=>{
-    if(!orgId){
+  const handleOpenOrganization = (orgId) => {
+    if (!orgId) {
       return
     }
 
@@ -99,116 +106,154 @@ const Organization = () => {
   }
 
   return (
-    <div className="org-container">
-      <motion.div
-        className="org-ambient org-ambient-one"
-        animate={{ x: [0, 34, 0], y: [0, -28, 0], scale: [1, 1.1, 1] }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="org-ambient org-ambient-two"
-        animate={{ x: [0, -32, 0], y: [0, 30, 0], scale: [1, 1.08, 1] }}
-        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <svg className="org-lines" viewBox="0 0 1200 720" aria-hidden="true">
-        <path d="M-90 260 C150 120 360 430 590 250 C820 70 1010 210 1300 70" />
-        <path d="M-60 560 C180 420 380 680 650 455 C870 270 1030 470 1290 250" />
-      </svg>
-      <div className="org-nav">
-        <DashNav/>
-      </div>
-      <div className="org-main">
-        <motion.section
-          className="org-hero"
-          initial={{ opacity: 0, y: 28 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, ease: "easeOut" }}
-        >
-          <div className="org-info">
-            <div className="about">
-              <span className="org-kicker"><Sparkles size={16}/> Workspace command center</span>
-              <h1>Your Organizations</h1>
-              <p>Create or select a workspace to continue building with your team.</p>
-            </div>
-            <div className="create-button">
-              <button type="button" onClick={()=>{setShowForm(previous => !previous)}}>
-                <Plus size={18}/> Create Organization
-              </button>
-            </div>
-          </div>
+    <div className="orgx-page">
+      <div className="orgx-frame">
 
-          <div className="org-stats">
-            <div>
-              <Building2 size={20}/>
-              <span>{organizations.length}</span>
-              <p>Real workspaces</p>
-            </div>
-            <div>
-              <UsersRound size={20}/>
-              <span>{totalMembers}</span>
-              <p>Visible members</p>
-            </div>
-            <div>
-              <ShieldCheck size={20}/>
-              <span>Secure</span>
-              <p>Auth protected</p>
-            </div>
-          </div>
-        </motion.section>
+        <DashNav user={user?.name} />
 
-        <section className="org-workbench">
-          <div className="org-toolbar">
-            <div className="search-shell">
-              <Search size={18}/>
-              <input type="text" placeholder="Search organizations" readOnly />
-            </div>
-            <div className="toolbar-pill">
-              <Zap size={16}/>
-              <span>Workspace view ready</span>
-            </div>
-          </div>
+        {/* giant headline */}
+        <div className="orgx-head">
+          <h1 className="orgx-title" aria-label="Mission control.">
+            <span className="orgx-mask">
+              <motion.span
+                className="orgx-line"
+                custom={0}
+                variants={lineReveal}
+                initial="hidden"
+                animate="visible"
+              >
+                MISSION
+              </motion.span>
+            </span>
+            <span className="orgx-mask">
+              <motion.span
+                className="orgx-line"
+                custom={1}
+                variants={lineReveal}
+                initial="hidden"
+                animate="visible"
+              >
+                <em>control</em>
+                <motion.i
+                  className="orgx-star"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 9, repeat: Infinity, ease: "linear" }}
+                >
+                  <Asterisk size={"100%"} strokeWidth={2.4} />
+                </motion.i>
+              </motion.span>
+            </span>
+          </h1>
 
-          {showForm && <motion.div
-            className="create-org-panel"
-            initial={{ opacity: 0, y: 18, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.32, ease: "easeOut" }}
+          {/* stats rail */}
+          <motion.div
+            className="orgx-stats"
+            initial={{ opacity: 0, y: 26 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
             <div>
-              <span className="org-kicker">New workspace</span>
-              <h2>Create organization</h2>
-              <p>Create Your New Organization and Start Working.</p>
+              <strong>{organizations.length}</strong>
+              <span>UNIVERSES</span>
             </div>
-             <form onSubmit={handleCreateOrganization} className="create-form-preview">
+            <div>
+              <strong>{totalMembers}</strong>
+              <span>CREW IN ORBIT</span>
+            </div>
+            <div>
+              <strong>ON</strong>
+              <span>SHIELDS</span>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* toolbar */}
+        <motion.div
+          className="orgx-toolbar"
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="orgx-search">
+            <Search size={18} strokeWidth={2.2} />
+            <input type="text" placeholder="SCAN THE UNIVERSE…" readOnly />
+          </div>
+          <button
+            type="button"
+            className="orgx-forge"
+            onClick={() => { setShowForm(previous => !previous) }}
+          >
+            <Plus size={17} strokeWidth={2.4} /> FORGE NEW
+          </button>
+        </motion.div>
+
+        {/* forge panel */}
+        {showForm && <motion.div
+          className="orgx-panel"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="orgx-panel-copy">
+            <span className="orgx-panel-kicker">// FORGE NEW</span>
+            <h2>Name your <em>world.</em></h2>
+            <p>A name, one line about the mission — and your crew has a home.</p>
+          </div>
+          <form onSubmit={handleCreateOrganization} className="orgx-form">
+            <label className="orgx-field">
+              <span>(01) — ORG_NAME</span>
               <input
                 name="name"
-                placeholder="Organization name"
+                placeholder="Nebula Labs"
                 value={formData.name}
                 onChange={handleChange}
               />
+            </label>
+            <label className="orgx-field">
+              <span>(02) — MISSION_LINE</span>
               <input
                 name="description"
-                placeholder="Short description"
+                placeholder="Ship the impossible."
                 value={formData.description}
                 onChange={handleChange}
               />
-              {error && <p className="org-error">{error}</p>}
-              <button type="submit" disabled={creating}>{creating?"Creating...":"Create Organization"} <ArrowRight size={17}/></button>
-            </form>
-          </motion.div>}
+            </label>
+            {error && <p className="orgx-error">⚠ {error}</p>}
+            <button type="submit" disabled={creating} className="orgx-submit">
+              <span>{creating ? "FORGING…" : "FORGE ORGANIZATION"}</span>
+              <ArrowUpRight size={20} strokeWidth={2.2} />
+            </button>
+          </form>
+        </motion.div>}
 
-          {organizations.length === 0 && <div className="empty-banner">
-            <FolderKanban size={20}/>
-            <p>No real organization loaded yet.Create Organization and Get Started.</p>
-          </div>}
-          
-        <div className="org-card">
-          {fetchError && <p className="org-error">{fetchError}</p>}
-          {organizations.map((organization)=>(
-            <OrganizationCard key={organization._id} organization={organization} userId={user?._id} onOpen={handleOpenOrganization}/>
+        {/* list head */}
+        <div className="orgx-list-head">
+          <span>(INDEX)</span>
+          <span>YOUR ORGANIZATIONS</span>
+        </div>
+
+        {organizations.length === 0 && <div className="orgx-empty">
+          <p>Empty space out here. <em>Forge your first universe</em> and light it up.</p>
+        </div>}
+
+        <div className="orgx-list">
+          {fetchError && <p className="orgx-error">⚠ {fetchError}</p>}
+          {organizations.map((organization) => (
+            <OrganizationCard key={organization._id} organization={organization} userId={user?._id} onOpen={handleOpenOrganization} />
           ))}
         </div>
-        </section>
+
+        {/* bottom rail */}
+        <motion.div
+          className="orgx-foot"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 0.8 }}
+        >
+          <span><i className="orgx-blip" /> DECK LIVE</span>
+          <span>ORGS ⟶ TEAMS ⟶ PROJECTS ⟶ TASKS</span>
+          <span>© 2026</span>
+        </motion.div>
       </div>
     </div>
   )

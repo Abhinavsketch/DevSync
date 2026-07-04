@@ -1,38 +1,48 @@
 import "./organizationCard.css"
-import { ArrowUpRight, Crown, UsersRound } from "lucide-react"
+import { ArrowUpRight, UsersRound } from "lucide-react"
 import { motion } from "framer-motion"
 
 
-const OrganizationCard = ({organization,userId,onOpen})=>{
+const OrganizationCard = ({ organization, userId, onOpen }) => {
     const displayName = organization?.name || "Demo"
-    const profileName = displayName.slice(0,2).toUpperCase()
+    const profileName = displayName.slice(0, 2).toUpperCase()
     const isOwner = organization?.owner?.toString() === userId?.toString()
 
-    return(
-        <motion.div
-            className="card-container"
-            whileHover={{ y: -10, scale: 1.015 }}
-            transition={{ type: "spring", stiffness: 180, damping: 18 }}
+    return (
+        <motion.article
+            className="orgx-row"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-            <div className="card-info">
-                <div className="card-border">
-                    <h3>{profileName}</h3>
-                </div>
-                <div className="des">
-                    <h2>{displayName}</h2>
-                    <h4>{organization?.description || "Nothing About Project"}</h4>
-                </div>
+            <span className="orgx-index" aria-hidden="true" />
+
+            <div className="orgx-mark">{profileName}</div>
+
+            <div className="orgx-name">
+                <h2>{displayName}</h2>
+                <p>{organization?.description || "No mission statement yet."}</p>
             </div>
-            <div className="card-about">
-                <h3><UsersRound size={17}/>{organization?.members?.length || 0}</h3>
-                <h4><Crown size={14}/>{isOwner?"Owner":"Member"}</h4>
+
+            <div className="orgx-meta">
+                <span className="orgx-crew">
+                    <UsersRound size={13} /> {organization?.members?.length || 0} CREW
+                </span>
+                <span className={`orgx-role ${isOwner ? "own" : ""}`}>
+                    {isOwner ? "OWNER" : "MEMBER"}
+                </span>
             </div>
-            <div className="open-button">
-                <button type="button" onClick={()=>(onOpen?.(organization?._id))}>
-                    Open Organization <ArrowUpRight size={17}/>
-                </button>
-            </div>
-        </motion.div>
+
+            <button
+                type="button"
+                className="orgx-open"
+                onClick={() => (onOpen?.(organization?._id))}
+                aria-label={`Open ${displayName}`}
+            >
+                <ArrowUpRight size={26} strokeWidth={2.2} />
+            </button>
+        </motion.article>
     )
 }
 

@@ -1,246 +1,284 @@
-import Intro from "../../components/layout/Intro/intro"
-import Navbar from "../../components/layout/Navbar/navbar"
-import { ArrowRight, Bell, CheckCircle2, FileText, FolderKanban, GitBranch, Layers3, LockKeyhole, MessageSquareText, Rocket, Sparkles, UsersRound, Zap } from "lucide-react"
-import { motion } from "framer-motion"
-import { Link } from "react-router-dom"
-import "./landing.css"
+import Intro from "../../components/layout/Intro/intro";
+import Navbar from "../../components/layout/Navbar/navbar";
+import { motion, useScroll, useSpring } from "framer-motion";
+import { Link } from "react-router-dom";
+import { ArrowUpRight, ArrowRight, Asterisk } from "lucide-react";
+import "./landing.css";
 
-const sectionMotion = {
-    initial: { opacity: 0, y: 56 },
+const rise = {
+    initial: { opacity: 0, y: 50 },
     whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true, amount: 0.18 },
-    transition: { duration: 0.72, ease: "easeOut" },
-}
+    viewport: { once: true, amount: 0.25 },
+    transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] },
+};
 
-const cardMotion = {
-    whileHover: { y: -10, scale: 1.015 },
-    transition: { type: "spring", stiffness: 180, damping: 18 },
-}
+const tickerWords = ["ORGANIZE", "SYNC", "BUILD", "SHIP", "REPEAT"];
 
-const Landing = ()=>{
+const systemRows = [
+    {
+        num: "01",
+        title: "ORGANIZATIONS",
+        tag: "MISSION CONTROL",
+        copy: "Forge a world for your crew — every team, project and file under one roof.",
+    },
+    {
+        num: "02",
+        title: "CREW & ROLES",
+        tag: "ACCESS BY DESIGN",
+        copy: "Owners command, members build. Secure invites snap people into place.",
+    },
+    {
+        num: "03",
+        title: "LIVE SIGNALS",
+        tag: "ZERO NOISE",
+        copy: "Invites, mentions, task moves — the right ping to the right human, instantly.",
+    },
+    {
+        num: "04",
+        title: "KANBAN FLOW",
+        tag: "WORK, MOVING",
+        copy: "Drag reality across the board. Status changes ripple to everyone live.",
+    },
+    {
+        num: "05",
+        title: "AUDIT PULSE",
+        tag: "TOTAL RECALL",
+        copy: "Every move leaves a heartbeat. Yesterday is never a mystery again.",
+    },
+];
+
+const flowSteps = [
+    { num: "①", title: "FORGE", copy: "One click births an organization — a home for the whole operation." },
+    { num: "②", title: "SUMMON", copy: "Tokenized invites fly out. The crew accepts, roles lock in." },
+    { num: "③", title: "ORCHESTRATE", copy: "Goals split into projects and tasks. The board becomes the truth." },
+    { num: "④", title: "SHIP", copy: "The ring fills, chat erupts, and the next sprint is already loading." },
+];
+
+const bigStats = [
+    { value: "1", label: "WORKSPACE FOR EVERYTHING" },
+    { value: "0", label: "CONTEXT LOST BETWEEN TABS" },
+    { value: "∞", label: "MOMENTUM ON TAP" },
+];
+
+const priceRows = [
+    { name: "SOLO", price: "FREE", copy: "For midnight side-quests.", perks: "1 org · core boards" },
+    { name: "SQUAD", price: "$12", copy: "For crews who ship together.", perks: "Unlimited orgs · roles · realtime", hot: true },
+    { name: "GALAXY", price: "CUSTOM", copy: "For orgs with gravity.", perks: "Advanced control · audit-ready" },
+];
+
+const Landing = () => {
+    const { scrollYProgress } = useScroll();
+    const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 24, mass: 0.4 });
+
     return (
-        <div className="landing">
-            <motion.div
-                className="landing-ambient ambient-one"
-                animate={{ x: [0, 32, 0], y: [0, -28, 0], scale: [1, 1.08, 1] }}
-                transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <motion.div
-                className="landing-ambient ambient-two"
-                animate={{ x: [0, -34, 0], y: [0, 30, 0], scale: [1, 1.12, 1] }}
-                transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <svg className="landing-lines" viewBox="0 0 1200 720" aria-hidden="true">
-                <path d="M-80 320 C180 160 320 520 560 310 C800 100 940 230 1290 90" />
-                <path d="M-40 520 C210 420 360 690 620 470 C820 300 1000 460 1270 260" />
-            </svg>
-            <nav>
-                <Navbar/>
-            </nav>
-            <main>
-                <Intro/>
+        <div className="ed-page">
+            <motion.div className="ed-progress" style={{ scaleX: progress }} />
 
-                <motion.section {...sectionMotion} className="logo-strip reveal-section" aria-label="DevSync capabilities">
-                    <span>Async-first teams</span>
-                    <span>Project clarity</span>
-                    <span>Secure files</span>
-                    <span>Team chat</span>
-                    <span>Fast shipping</span>
-                </motion.section>
+            <div className="ed-frame">
+                <header className="ed-header">
+                    <Navbar />
+                </header>
 
-                <motion.section {...sectionMotion} className="landing-section features-section" id="features">
-                    <div className="section-heading reveal-section">
-                        <span className="section-kicker">Features</span>
-                        <h2>Everything your team needs to stay in sync.</h2>
-                        <p>DevSync keeps organizations, tasks, files and conversations in one focused workspace.</p>
-                    </div>
-                    <div className="feature-grid">
-                        <motion.article {...cardMotion} className="feature-card reveal-card">
-                            <div className="feature-icon"><FolderKanban size={22}/></div>
-                            <h3>Workspace control</h3>
-                            <p>Create organizations, manage members and keep every project under one clean dashboard.</p>
-                        </motion.article>
-                        <motion.article {...cardMotion} className="feature-card reveal-card">
-                            <div className="feature-icon"><UsersRound size={22}/></div>
-                            <h3>Role-aware teams</h3>
-                            <p>Owners and members get different controls, so collaboration stays smooth and secure.</p>
-                        </motion.article>
-                        <motion.article {...cardMotion} className="feature-card reveal-card">
-                            <div className="feature-icon"><MessageSquareText size={22}/></div>
-                            <h3>Context-rich chat</h3>
-                            <p>Keep decisions close to the work instead of losing updates across random channels.</p>
-                        </motion.article>
-                        <motion.article {...cardMotion} className="feature-card reveal-card">
-                            <div className="feature-icon"><FileText size={22}/></div>
-                            <h3>File clarity</h3>
-                            <p>Attach the right documents to the right workspace so the team always knows what matters.</p>
-                        </motion.article>
-                        <motion.article {...cardMotion} className="feature-card reveal-card">
-                            <div className="feature-icon"><Bell size={22}/></div>
-                            <h3>Activity signals</h3>
-                            <p>Highlight important movement across teams, tasks and comments without overwhelming users.</p>
-                        </motion.article>
-                        <motion.article {...cardMotion} className="feature-card reveal-card">
-                            <div className="feature-icon"><LockKeyhole size={22}/></div>
-                            <h3>Secure sessions</h3>
-                            <p>Short-lived access tokens and refresh-cookie auth keep the app closer to real-world patterns.</p>
-                        </motion.article>
-                    </div>
-                </motion.section>
+                <main>
+                    <Intro />
 
-                <motion.section {...sectionMotion} className="landing-section workflow-section" id="workflow">
-                    <div className="section-heading reveal-section">
-                        <span className="section-kicker">Workflow</span>
-                        <h2>From idea to shipped work in one flow.</h2>
-                        <p>A simple path that makes the product story easy to understand when someone opens your project.</p>
-                    </div>
-                    <div className="workflow-rail">
-                        <motion.article {...cardMotion} className="workflow-step reveal-card">
-                            <span>01</span>
-                            <h3>Create workspace</h3>
-                            <p>Start with an organization and invite the right people into the same working space.</p>
-                        </motion.article>
-                        <motion.article {...cardMotion} className="workflow-step reveal-card">
-                            <span>02</span>
-                            <h3>Build teams</h3>
-                            <p>Split work by team so every member knows where their responsibilities live.</p>
-                        </motion.article>
-                        <motion.article {...cardMotion} className="workflow-step reveal-card">
-                            <span>03</span>
-                            <h3>Track projects</h3>
-                            <p>Move from broad goals to concrete tasks, files, comments and visible progress.</p>
-                        </motion.article>
-                        <motion.article {...cardMotion} className="workflow-step reveal-card">
-                            <span>04</span>
-                            <h3>Ship faster</h3>
-                            <p>Use shared context to reduce confusion and keep delivery momentum alive.</p>
-                        </motion.article>
-                    </div>
-                </motion.section>
+                    {/* ══ black ticker ══ */}
+                    <section className="ed-ticker" aria-hidden="true">
+                        {[0, 1].map((dup) => (
+                            <div className="ed-ticker-track" key={dup}>
+                                {tickerWords.map((word) => (
+                                    <span key={`${dup}-${word}`}>
+                                        {word} <Asterisk size={20} strokeWidth={2.6} />
+                                    </span>
+                                ))}
+                            </div>
+                        ))}
+                    </section>
 
-                <motion.section {...sectionMotion} className="landing-section product-section" id="product">
-                    <div className="product-copy reveal-section">
-                        <span className="section-kicker">Product</span>
-                        <h2>A dashboard that feels alive, not empty.</h2>
-                        <p>Landing pages feel stronger when users can imagine the app before logging in. This preview is visual only, but it sells the product idea clearly.</p>
-                        <div className="product-points">
-                            <p><CheckCircle2 size={18}/> Organization-first navigation</p>
-                            <p><CheckCircle2 size={18}/> Task and file aware workspace</p>
-                            <p><CheckCircle2 size={18}/> Built for future real-time updates</p>
+                    {/* ══ 01 · manifesto ══ */}
+                    <section className="ed-block" id="manifesto">
+                        <motion.div className="ed-block-head" {...rise}>
+                            <span>(01)</span>
+                            <span>THE POINT</span>
+                        </motion.div>
+                        <motion.h2 className="ed-manifesto" {...rise}>
+                            Your team's work is scattered across nine tabs.
+                            DevSync pulls it into <em>one heartbeat</em> — orgs, tasks,
+                            chat and signals, moving <span className="ed-hl">together</span>.
+                        </motion.h2>
+                    </section>
+
+                    {/* ══ 02 · system index ══ */}
+                    <section className="ed-block" id="system">
+                        <motion.div className="ed-block-head" {...rise}>
+                            <span>(02)</span>
+                            <span>THE SYSTEM</span>
+                        </motion.div>
+
+                        <div className="ed-index">
+                            {systemRows.map((row, i) => (
+                                <motion.article
+                                    className="ed-row"
+                                    key={row.num}
+                                    initial={{ opacity: 0, y: 40 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, amount: 0.35 }}
+                                    transition={{ duration: 0.7, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                                >
+                                    <span className="ed-row-num">{row.num}</span>
+                                    <h3>{row.title}</h3>
+                                    <div className="ed-row-side">
+                                        <span className="ed-row-tag">{row.tag}</span>
+                                        <p>{row.copy}</p>
+                                    </div>
+                                    <span className="ed-row-arrow">
+                                        <ArrowUpRight size={30} strokeWidth={2.2} />
+                                    </span>
+                                </motion.article>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* ══ 03 · flow band (black) ══ */}
+                    <section className="ed-flow" id="flow">
+                        <motion.div className="ed-block-head inv" {...rise}>
+                            <span>(03)</span>
+                            <span>THE FLOW</span>
+                        </motion.div>
+
+                        <motion.h2 className="ed-flow-title" {...rise}>
+                            IDEA ⟶ SHIPPED,<br />
+                            <em>without the drift.</em>
+                        </motion.h2>
+
+                        <div className="ed-flow-rail">
+                            {flowSteps.map((step, i) => (
+                                <motion.article
+                                    className="ed-flow-card"
+                                    key={step.title}
+                                    initial={{ opacity: 0, y: 60 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, amount: 0.3 }}
+                                    transition={{ duration: 0.75, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                                >
+                                    <span className="ed-flow-num">{step.num}</span>
+                                    <h3>{step.title}</h3>
+                                    <p>{step.copy}</p>
+                                    <i className="ed-flow-line" />
+                                </motion.article>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* ══ 04 · numbers ══ */}
+                    <section className="ed-block">
+                        <motion.div className="ed-block-head" {...rise}>
+                            <span>(04)</span>
+                            <span>THE MATH</span>
+                        </motion.div>
+                        <div className="ed-numbers">
+                            {bigStats.map((stat, i) => (
+                                <motion.div
+                                    className="ed-number"
+                                    key={stat.label}
+                                    initial={{ opacity: 0, y: 50 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, amount: 0.4 }}
+                                    transition={{ duration: 0.8, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
+                                >
+                                    <strong>{stat.value}</strong>
+                                    <span>{stat.label}</span>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* ══ 05 · pricing rows ══ */}
+                    <section className="ed-block" id="pricing">
+                        <motion.div className="ed-block-head" {...rise}>
+                            <span>(05)</span>
+                            <span>THE DEAL</span>
+                        </motion.div>
+
+                        <div className="ed-prices">
+                            {priceRows.map((row, i) => (
+                                <motion.div
+                                    key={row.name}
+                                    initial={{ opacity: 0, y: 40 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, amount: 0.35 }}
+                                    transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                                >
+                                    <Link to="/register" className={`ed-price-row ${row.hot ? "hot" : ""}`}>
+                                        {row.hot && <span className="ed-hot-flag">MOST LOVED</span>}
+                                        <h3>{row.name}</h3>
+                                        <p className="ed-price-copy">{row.copy}</p>
+                                        <span className="ed-price-perks">{row.perks}</span>
+                                        <strong>{row.price}</strong>
+                                        <span className="ed-row-arrow">
+                                            <ArrowUpRight size={26} strokeWidth={2.2} />
+                                        </span>
+                                    </Link>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* ══ launch CTA (black) ══ */}
+                    <motion.section className="ed-launch" {...rise}>
+                        <div className="ed-launch-badge" aria-hidden="true">
+                            <svg viewBox="0 0 120 120">
+                                <defs>
+                                    <path id="edCircle" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0" />
+                                </defs>
+                                <text>
+                                    <textPath href="#edCircle">
+                                        START FREE — NO CARD — START FREE — NO CARD —
+                                    </textPath>
+                                </text>
+                            </svg>
+                            <Asterisk size={26} />
+                        </div>
+                        <h2>
+                            LET'S <em>sync.</em>
+                        </h2>
+                        <p>Your crew is one workspace away from moving as one.</p>
+                        <Link to="/register" className="ed-launch-btn">
+                            ENTER DEVSYNC <ArrowRight size={18} />
+                        </Link>
+                    </motion.section>
+                </main>
+
+                {/* ══ footer ══ */}
+                <footer className="ed-footer">
+                    <div className="ed-footer-cols">
+                        <div className="ed-footer-brand">
+                            <h4>DEVSYNC<sup>®</sup></h4>
+                            <p>Every team. One pulse. Zero chaos.</p>
+                        </div>
+                        <div className="ed-footer-col">
+                            <span>INDEX</span>
+                            <a href="#manifesto">Manifesto</a>
+                            <a href="#system">System</a>
+                            <a href="#pricing">Pricing</a>
+                        </div>
+                        <div className="ed-footer-col">
+                            <span>ENTER</span>
+                            <Link to="/login">Log in</Link>
+                            <Link to="/register">Start free</Link>
+                        </div>
+                        <div className="ed-footer-col">
+                            <span>STACK</span>
+                            <em>MERN · SOCKET.IO</em>
+                            <em>JWT · FRAMER</em>
                         </div>
                     </div>
-                    <motion.div
-                        className="product-showcase reveal-card"
-                        whileHover={{ rotateX: 2, rotateY: -3, y: -8 }}
-                        transition={{ type: "spring", stiffness: 160, damping: 18 }}
-                    >
-                        <div className="showcase-sidebar">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </div>
-                        <div className="showcase-main">
-                            <div className="showcase-top">
-                                <div>
-                                    <p>Current Sprint</p>
-                                    <h3>Frontend polish</h3>
-                                </div>
-                                <span>82%</span>
-                            </div>
-                            <div className="showcase-bars">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </div>
-                            <div className="showcase-cards">
-                                <div>
-                                    <Layers3 size={19}/>
-                                    <h4>Design System</h4>
-                                    <p>Components aligned</p>
-                                </div>
-                                <div>
-                                    <GitBranch size={19}/>
-                                    <h4>Pull Requests</h4>
-                                    <p>2 waiting review</p>
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
-                </motion.section>
-
-                <motion.section {...sectionMotion} className="landing-section pricing-section" id="pricing">
-                    <div className="section-heading reveal-section">
-                        <span className="section-kicker">Pricing</span>
-                        <h2>Simple plans for a product demo.</h2>
-                        <p>Static pricing cards make the landing page feel complete even before payment logic exists.</p>
-                    </div>
-                    <div className="pricing-grid">
-                        <motion.article {...cardMotion} className="pricing-card reveal-card">
-                            <h3>Starter</h3>
-                            <p>For personal projects and small experiments.</p>
-                            <h4>Free</h4>
-                            <span>1 workspace</span>
-                            <span>Basic task tracking</span>
-                            <span>Community support</span>
-                        </motion.article>
-                        <motion.article {...cardMotion} className="pricing-card featured-price reveal-card">
-                            <div className="popular-badge">Most useful</div>
-                            <h3>Team</h3>
-                            <p>For teams that need shared project clarity.</p>
-                            <h4>$12<span>/mo</span></h4>
-                            <span>Unlimited workspaces</span>
-                            <span>Members and roles</span>
-                            <span>Files, comments and insights</span>
-                        </motion.article>
-                        <motion.article {...cardMotion} className="pricing-card reveal-card">
-                            <h3>Scale</h3>
-                            <p>For organizations that need stronger controls.</p>
-                            <h4>Custom</h4>
-                            <span>Advanced permissions</span>
-                            <span>Audit-ready activity</span>
-                            <span>Priority support</span>
-                        </motion.article>
-                    </div>
-                </motion.section>
-
-                <motion.section {...sectionMotion} className="landing-section resources-section" id="resources">
-                    <div className="section-heading reveal-section">
-                        <span className="section-kicker">Resources</span>
-                        <h2>Built like a product, explained like a portfolio.</h2>
-                    </div>
-                    <div className="resource-grid">
-                        <motion.article {...cardMotion} className="resource-card reveal-card">
-                            <Rocket size={22}/>
-                            <h3>Launch story</h3>
-                            <p>Show how DevSync solves team execution and not just CRUD screens.</p>
-                        </motion.article>
-                        <motion.article {...cardMotion} className="resource-card reveal-card">
-                            <Zap size={22}/>
-                            <h3>Technical depth</h3>
-                            <p>Auth refresh flow, authorization middleware and dashboard APIs prove backend thinking.</p>
-                        </motion.article>
-                        <motion.article {...cardMotion} className="resource-card reveal-card">
-                            <Sparkles size={22}/>
-                            <h3>Design polish</h3>
-                            <p>Strong UI makes the same features feel more mature and resume-worthy.</p>
-                        </motion.article>
-                    </div>
-                </motion.section>
-
-                <motion.section {...sectionMotion} className="final-cta reveal-section">
-                    <div>
-                        <span className="section-kicker">Start now</span>
-                        <h2>Bring your team into one focused workspace.</h2>
-                        <p>DevSync is being shaped into a production-style MERN collaboration platform.</p>
-                    </div>
-                    <Link to="/register" className="final-cta-link">
-                        Create workspace <ArrowRight size={18}/>
-                    </Link>
-                </motion.section>
-            </main>
+                    <p className="ed-footer-note">© 2026 — BUILT AT 2AM WITH UNREASONABLE CARE</p>
+                    <div className="ed-footer-mark" aria-hidden="true">DEVSYNC</div>
+                </footer>
+            </div>
         </div>
-    )
-}
+    );
+};
 
-export default Landing
+export default Landing;

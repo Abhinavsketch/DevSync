@@ -1,22 +1,19 @@
 import "./dashNav.css"
-import devSyncLogo from "../../../assets/brand/devsync-logo-transparent.png"
 import { ChevronDown } from "lucide-react";
 
-const DashNav = ({user})=>{
+const DashNav = ({ user }) => {
     const displayName = user || "Abhinav"
-    const profileName = displayName.slice(0,2).toUpperCase()
+    const profileName = displayName.slice(0, 2).toUpperCase()
     return (
-        <div className="navContainer">
-            <div className="navlogo">
-                <img className="orgLogo" src={devSyncLogo} alt="logo of product" />
-                <h2>DevSync</h2>
+        <div className="dashrail">
+            <div className="dashrail-brand">
+                DEVSYNC<sup>®</sup>
             </div>
-            <div className="profile">
-                <div className="nameBorder">
-                    <h3>{profileName}</h3>
-                </div>
+            <span className="dashrail-mid">OPERATOR DECK — LIVE</span>
+            <div className="dashrail-profile">
+                <span className="dashrail-ava">{profileName}</span>
                 <h4>{displayName}</h4>
-                <ChevronDown className="profile-chevron" size={18} />
+                <ChevronDown className="dashrail-chevron" size={16} />
             </div>
         </div>
     )

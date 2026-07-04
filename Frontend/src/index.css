@@ -1,0 +1,258 @@
+/* ══════════════════════════════════════════════════════════
+   DevSync — "INK & SIGNAL" Design System
+   Paper editorial (marketing) · Charcoal + signal (app)
+   ══════════════════════════════════════════════════════════ */
+
+:root {
+  /* app surfaces (dark) */
+  --bg-0: #0b0a09;
+  --bg-1: #12100e;
+  --bg-2: #171512;
+  --card: rgba(255, 250, 240, 0.03);
+  --card-strong: rgba(255, 250, 240, 0.06);
+  --line: rgba(255, 250, 240, 0.09);
+  --line-strong: rgba(255, 250, 240, 0.17);
+
+  /* ink */
+  --ink: #f4f1ea;
+  --ink-dim: #a8a49a;
+  --ink-faint: #67635a;
+
+  /* editorial paper (marketing pages) */
+  --paper: #efeae2;
+  --paper-dim: #e5dfd4;
+  --char: #141412;
+  --char-dim: #55524b;
+
+  /* SIGNAL identity — orange heat + acid lime */
+  --violet: #ff4b1e;              /* legacy name → signal orange */
+  --cyan: #d9f24b;                /* legacy name → acid lime */
+  --magenta: #ff9d69;             /* legacy name → soft ember */
+  --lime: #d9f24b;
+  --amber: #ffb347;
+  --rose: #ff6b57;
+  --violet-soft: rgba(255, 75, 30, 0.13);
+  --cyan-soft: rgba(217, 242, 75, 0.1);
+  --magenta-soft: rgba(255, 157, 105, 0.12);
+  --aurora: linear-gradient(115deg, #ff4b1e 0%, #ff8a3d 52%, #d9f24b 100%);
+  --aurora-text: linear-gradient(100deg, #ff6a3d 0%, #ffa25c 45%, #e4f76b 100%);
+
+  /* type */
+  --font-display: "Syne", "Inter", sans-serif;
+  --font-serif: "Instrument Serif", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* shape + depth */
+  --r-xl: 26px;
+  --r-lg: 18px;
+  --r-md: 13px;
+  --r-sm: 9px;
+  --shadow-xl: 0 40px 90px -24px rgba(0, 0, 0, 0.85);
+  --shadow-lg: 0 24px 60px -18px rgba(0, 0, 0, 0.7);
+  --glow-violet: 0 0 44px -8px rgba(255, 75, 30, 0.5);
+  --glow-cyan: 0 0 44px -8px rgba(217, 242, 75, 0.4);
+}
+
+/* rotating-border custom property */
+@property --spin {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg-0);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+/* warm ember atmosphere for app pages */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 42% at 10% -6%, rgba(255, 75, 30, 0.09), transparent 60%),
+    radial-gradient(ellipse 52% 38% at 94% 10%, rgba(217, 242, 75, 0.05), transparent 62%),
+    radial-gradient(ellipse 70% 50% at 50% 110%, rgba(255, 138, 61, 0.06), transparent 60%);
+}
+
+/* film grain */
+body::after {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  z-index: 2147483647;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 9s steps(6) infinite;
+}
+
+@keyframes grain-shift {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-4%, 3%); }
+  40% { transform: translate(3%, -5%); }
+  60% { transform: translate(-5%, -2%); }
+  80% { transform: translate(4%, 4%); }
+  100% { transform: translate(0, 0); }
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+::selection {
+  background: #ff4b1e;
+  color: #fff;
+}
+
+/* scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 75, 30, 0.65);
+  border-radius: 99px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 75, 30, 0.95);
+  background-clip: content-box;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+/* ── shared keyframes ── */
+@keyframes spin-border {
+  to { --spin: 360deg; }
+}
+
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes shine-sweep {
+  from { transform: translateX(-130%) skewX(-18deg); }
+  to { transform: translateX(240%) skewX(-18deg); }
+}
+
+@keyframes draw-line {
+  from { stroke-dashoffset: 2400; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.82); }
+}
+
+@keyframes rise-fade {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes beam-rotate {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes floor-slide {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 0 54px, 0 0; }
+}
+
+@keyframes ring-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes core-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
+
+@keyframes caret-blink {
+  50% { opacity: 0; }
+}
+
+@keyframes term-line {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fill-drift {
+  from { background-position: 0% 0; }
+  to { background-position: 100% 0; }
+}
+
+@keyframes blip {
+  0% { box-shadow: 0 0 0 0 rgba(255, 75, 30, 0.55); }
+  75% { box-shadow: 0 0 0 12px rgba(255, 75, 30, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 75, 30, 0); }
+}
+
+/* reduced motion respect */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

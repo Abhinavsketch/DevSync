@@ -1,29 +1,16 @@
 import "./organizationDetail.css";
 import { useParams } from "react-router-dom";
-import { useState, useEffect, useContext} from "react";
+import { useState, useEffect, useContext } from "react";
 import DashNav from "../../components/layout/Dashboard Navbar/dashNav";
 import { motion } from "framer-motion";
 import {
-  Activity,
-  AlertTriangle,
   ArrowLeft,
+  ArrowUpRight,
+  Asterisk,
   Bell,
-  Building2,
-  CheckCircle2,
-  ChevronRight,
-  CircleDot,
-  Clock3,
-  FolderKanban,
-  LayoutDashboard,
-  ListTodo,
-  MessageSquareText,
   Plus,
   RefreshCw,
   Settings,
-  ShieldCheck,
-  Sparkles,
-  UsersRound,
-  Zap,
 } from "lucide-react";
 import { AuthContext } from "../../context/authContext";
 import { useNavigate } from "react-router-dom";
@@ -32,10 +19,18 @@ import { getDashboardOverview } from "../../api/dashboardApi";
 const activityDateFormatter = new Intl.DateTimeFormat("en-IN");
 const projectDateFormatter = new Intl.DateTimeFormat("en-IN");
 
+const lineReveal = {
+  hidden: { y: "115%" },
+  visible: (i) => ({
+    y: "0%",
+    transition: { duration: 0.95, ease: [0.16, 1, 0.3, 1], delay: 0.15 + i * 0.12 },
+  }),
+};
+
 const OrganizationDetail = () => {
   const params = useParams();
   const [overview, setOverview] = useState(null);
-  const [retry,setRetry] = useState(0)
+  const [retry, setRetry] = useState(0)
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
@@ -46,49 +41,65 @@ const OrganizationDetail = () => {
   };
 
 
-  const handleRetry = ()=>{
+  const handleRetry = () => {
     setError("")
     setLoading(true)
-    setRetry((previous)=>(previous + 1))
+    setRetry((previous) => (previous + 1))
   }
 
   useEffect(() => {
     let ignore = false;
-    getDashboardOverview(params.id).then((data)=>{
-      if(ignore){
+    getDashboardOverview(params.id).then((data) => {
+      if (ignore) {
         return
       }
       setOverview(data)
       setError("")
-    }).catch((error)=>{
-      if(ignore) {
+    }).catch((error) => {
+      if (ignore) {
         return
       }
       setError(error.response?.data?.message || "Organization Not Found")
-    }).finally(()=>{
-      if(!ignore){
+    }).finally(() => {
+      if (!ignore) {
         setLoading(false)
       }
     })
 
-    return ()=>{
+    return () => {
       ignore = true
     }
-  }, [params.id , retry]);
+  }, [params.id, retry]);
 
   if (loading) {
     return (
-      <div className="detail-state-screen">
-        <div className="detail-state-glow" />
-        <div className="detail-loader-orbit">
-          <span />
-          <Building2 size={28} />
-        </div>
-        <span className="detail-state-kicker">Opening workspace</span>
-        <h1>Syncing your command center</h1>
-        <p>Pulling organization details, members, and workspace structure.</p>
-        <div className="detail-loading-track">
-          <span />
+      <div className="dtx-page dtx-statepage">
+        <div className="dtx-frame">
+          <div className="dtx-minirail">
+            <span>DEVSYNC<sup>®</sup></span>
+            <span>OPENING UNIVERSE</span>
+            <span>[ HOLD ]</span>
+          </div>
+          <div className="dtx-state-center">
+            <h1 className="dtx-state-title">
+              SYNCING
+              <br />
+              <em>the deck</em>
+              <i className="dtx-state-star" aria-hidden="true">
+                <Asterisk size={"100%"} strokeWidth={2.4} />
+              </i>
+            </h1>
+            <div className="dtx-track" aria-hidden="true">
+              <span />
+            </div>
+            <p className="dtx-state-sub">
+              ❯ pulling members, structure and the pulse…
+            </p>
+          </div>
+          <div className="dtx-minirail dtx-minirail-foot">
+            <span><i className="dtx-blip" /> LINK ACTIVE</span>
+            <span>© 2026</span>
+          </div>
         </div>
       </div>
     );
@@ -96,25 +107,37 @@ const OrganizationDetail = () => {
 
   if (error) {
     return (
-      <div className="detail-state-screen detail-error-screen">
-        <div className="detail-state-glow" />
-        <div className="detail-error-icon">
-          <AlertTriangle size={30} />
-        </div>
-        <span className="detail-state-kicker">Workspace unavailable</span>
-        <h1>We could not open this organization.</h1>
-        <p>{error}</p>
-        <div className="detail-state-actions">
-          <button type="button" onClick={headbacktoOrganization}>
-            <ArrowLeft size={17} /> All organizations
-          </button>
-          <button
-            type="button"
-            className="detail-retry-button"
-            onClick={handleRetry}
-          >
-            <RefreshCw size={17} /> Try again
-          </button>
+      <div className="dtx-page dtx-statepage">
+        <div className="dtx-frame">
+          <div className="dtx-minirail">
+            <span>DEVSYNC<sup>®</sup></span>
+            <span>SIGNAL ERROR</span>
+            <span>[ 404 ]</span>
+          </div>
+          <div className="dtx-state-center">
+            <h1 className="dtx-state-title">
+              LOST
+              <br />
+              <em>signal.</em>
+            </h1>
+            <p className="dtx-state-error">⚠ {error}</p>
+            <div className="dtx-state-actions">
+              <button type="button" onClick={headbacktoOrganization}>
+                <ArrowLeft size={16} /> ALL UNIVERSES
+              </button>
+              <button
+                type="button"
+                className="dtx-retry"
+                onClick={handleRetry}
+              >
+                <RefreshCw size={16} /> RETRY LINK
+              </button>
+            </div>
+          </div>
+          <div className="dtx-minirail dtx-minirail-foot">
+            <span><i className="dtx-blip" /> CONSOLE LIVE</span>
+            <span>© 2026</span>
+          </div>
         </div>
       </div>
     );
@@ -122,13 +145,24 @@ const OrganizationDetail = () => {
 
   if (!overview) {
     return (
-      <div className="detail-state-screen detail-error-screen">
-        <div className="detail-error-icon">
-          <Building2 size={30} />
+      <div className="dtx-page dtx-statepage">
+        <div className="dtx-frame">
+          <div className="dtx-minirail">
+            <span>DEVSYNC<sup>®</sup></span>
+            <span>EMPTY RESPONSE</span>
+            <span>[ VOID ]</span>
+          </div>
+          <div className="dtx-state-center">
+            <h1 className="dtx-state-title">
+              THE
+              <br />
+              <em>void.</em>
+            </h1>
+            <p className="dtx-state-sub">
+              ❯ the universe responded with nothing.
+            </p>
+          </div>
         </div>
-        <span className="detail-state-kicker">No workspace data</span>
-        <h1>Organization not found</h1>
-        <p>The workspace response did not contain organization details.</p>
       </div>
     );
   }
@@ -155,436 +189,351 @@ const OrganizationDetail = () => {
       ? 0
       : Math.round((taskStats.done / taskStats.total) * 100);
   return (
-    <div className="detail-page">
-      <motion.div
-        className="detail-ambient detail-ambient-one"
-        animate={{ x: [0, 36, 0], y: [0, -24, 0], scale: [1, 1.08, 1] }}
-        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="detail-ambient detail-ambient-two"
-        animate={{ x: [0, -30, 0], y: [0, 28, 0], scale: [1, 1.1, 1] }}
-        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-      />
+    <div className="dtx-page">
+      <div className="dtx-frame">
+        <DashNav user={user?.name} />
 
-      <header className="detail-topbar">
-        <DashNav />
-      </header>
-
-      <div className="detail-layout">
-        <motion.aside
-          className="detail-sidebar"
-          initial={{ opacity: 0, x: -24 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.55, ease: "easeOut" }}
+        {/* back rail */}
+        <motion.div
+          className="dtx-backrail"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7 }}
         >
-          <button
-            type="button"
-            className="detail-back-button"
-            onClick={headbacktoOrganization}
-          >
-            <ArrowLeft size={17} />
-            All organizations
+          <button type="button" onClick={headbacktoOrganization}>
+            <ArrowLeft size={15} /> ALL UNIVERSES
           </button>
+          <span>ID — {organization.id}</span>
+        </motion.div>
 
-          <div className="detail-org-identity">
-            <div className="detail-org-mark">{organizationInitials}</div>
-            <div>
-              <span>Current workspace</span>
-              <h2>{displayName}</h2>
-            </div>
-          </div>
-
-          <nav
-            className="detail-navigation"
-            aria-label="Organization workspace"
-          >
-            <button type="button" className="active">
-              <LayoutDashboard size={18} /> Overview
-            </button>
-            <button type="button">
-              <UsersRound size={18} /> Teams <span>{teamCount}</span>
-            </button>
-            <button type="button">
-              <FolderKanban size={18} /> Projects
-            </button>
-            <button type="button">
-              <ListTodo size={18} /> Tasks
-            </button>
-            <button type="button">
-              <Activity size={18} /> Activity
-            </button>
-            <button type="button">
-              <MessageSquareText size={18} /> Team chat
-            </button>
-          </nav>
-
-          <div className="detail-sidebar-bottom">
-            {isOwner && (
-              <button type="button">
-                <Settings size={18} /> Workspace settings
-              </button>
-            )}
-            <div className="detail-security-card">
-              <ShieldCheck size={20} />
-              <div>
-                <strong>Protected workspace</strong>
-                <span>Member access verified</span>
-              </div>
-            </div>
-          </div>
-        </motion.aside>
-
-        <main className="detail-content">
-          <motion.section
-            className="detail-hero"
-            initial={{ opacity: 0, y: 24 }}
+        {/* ── hero ── */}
+        <header className="dtx-hero">
+          <motion.p
+            className="dtx-welcome"
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.62, ease: "easeOut" }}
+            transition={{ delay: 0.1, duration: 0.7 }}
           >
-            <div className="detail-hero-copy">
-              <div className="detail-eyebrow">
-                <Sparkles size={15} /> Organization command center
-              </div>
-              <div className="detail-title-row">
-                <div>
-                  <p>Welcome back to</p>
-                  <h1>{displayName}</h1>
-                </div>
-                <span className="detail-live-pill">
-                  <CircleDot size={15} /> Workspace online
-                </span>
-              </div>
-              <p className="detail-description">
-                {organization.description ||
-                  "A focused workspace for your teams, projects, and product delivery."}
-              </p>
-              <div className="detail-meta-row">
-                <span>
-                  <ShieldCheck size={16} /> Owned by {ownerName}
-                </span>
-                <span>
-                  <Building2 size={16} /> ID {organization.id}
-                </span>
-                <span>Role: {isOwner ? "Owner" : "Member"}</span>
-              </div>
-            </div>
-            <div className="detail-hero-actions">
-              <button
-                type="button"
-                className="detail-icon-button"
-                aria-label="Notifications"
+            welcome back to
+          </motion.p>
+
+          <h1 className="dtx-title" aria-label={displayName}>
+            <span className="dtx-mask">
+              <motion.span
+                className="dtx-line"
+                custom={0}
+                variants={lineReveal}
+                initial="hidden"
+                animate="visible"
               >
-                <Bell size={19} />
+                {displayName}
+                <motion.i
+                  className="dtx-star"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 9, repeat: Infinity, ease: "linear" }}
+                >
+                  <Asterisk size={"100%"} strokeWidth={2.4} />
+                </motion.i>
+              </motion.span>
+            </span>
+          </h1>
+
+          <motion.div
+            className="dtx-hero-rail"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.45, duration: 0.75 }}
+          >
+            <div className="dtx-hero-meta">
+              <span className="dtx-live"><i className="dtx-blip" /> UNIVERSE ONLINE</span>
+              <span className="dtx-mark-mini">{organizationInitials}</span>
+              <span>OWNED BY {ownerName}</span>
+              <span className={`dtx-role ${isOwner ? "own" : ""}`}>
+                {isOwner ? "OWNER" : "MEMBER"}
+              </span>
+            </div>
+            <div className="dtx-hero-actions">
+              <button type="button" className="dtx-bell" aria-label="Notifications">
+                <Bell size={17} />
               </button>
-              <button type="button" className="detail-primary-button">
-                <Plus size={18} /> Create new
+              {isOwner && (
+                <button type="button" className="dtx-bell" aria-label="Settings">
+                  <Settings size={17} />
+                </button>
+              )}
+              <button type="button" className="dtx-create">
+                <Plus size={16} strokeWidth={2.4} /> CREATE NEW
               </button>
             </div>
-          </motion.section>
+          </motion.div>
 
-          <motion.section
-            className="detail-stats-grid"
-            initial="hidden"
-            animate="visible"
-            variants={{
-              hidden: {},
-              visible: { transition: { staggerChildren: 0.08 } },
-            }}
+          <motion.p
+            className="dtx-desc"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.55, duration: 0.75 }}
           >
-            <motion.article
-              variants={{
-                hidden: { opacity: 0, y: 16 },
-                visible: { opacity: 1, y: 0 },
-              }}
-            >
-              <div className="detail-stat-icon violet">
-                <UsersRound size={20} />
-              </div>
-              <span>Workspace members</span>
-              <strong>{memberCount}</strong>
-              <p>
-                <CheckCircle2 size={14} /> Active collaborators
-              </p>
-            </motion.article>
-            <motion.article
-              variants={{
-                hidden: { opacity: 0, y: 16 },
-                visible: { opacity: 1, y: 0 },
-              }}
-            >
-              <div className="detail-stat-icon cyan">
-                <UsersRound size={20} />
-              </div>
-              <span>Teams</span>
-              <strong>{teamCount}</strong>
-              <p>
-                <Zap size={14} /> Ready to organize
-              </p>
-            </motion.article>
-            <motion.article
-              variants={{
-                hidden: { opacity: 0, y: 16 },
-                visible: { opacity: 1, y: 0 },
-              }}
-            >
-              <div className="detail-stat-icon amber">
-                <FolderKanban size={20} />
-              </div>
-              <span>Projects</span>
-              <strong>{stats.totalProjects}</strong>
-              <p>
-                <Clock3 size={14} /> Across all teams
-              </p>
-            </motion.article>
-            <motion.article
-              variants={{
-                hidden: { opacity: 0, y: 16 },
-                visible: { opacity: 1, y: 0 },
-              }}
-            >
-              <div className="detail-stat-icon rose">
-                <ListTodo size={20} />
-              </div>
-              <span>Open tasks</span>
-              <strong>{openTaskCount}</strong>
-              <p>
-                <Clock3 size={14} /> Awaiting completion
-              </p>
-            </motion.article>
-          </motion.section>
+            "{organization.description ||
+              "A focused workspace for your teams, projects, and product delivery."}"
+          </motion.p>
+        </header>
 
-          <section className="detail-dashboard-grid">
-            <motion.article
-              className="detail-panel detail-progress-panel"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, delay: 0.24 }}
+        {/* ── section tabs ── */}
+        <motion.nav
+          className="dtx-tabs"
+          aria-label="Organization workspace"
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.7 }}
+        >
+          <button type="button" className="active">
+            <sup>01</sup> OVERVIEW
+          </button>
+          <button type="button">
+            <sup>02</sup> TEAMS <b>{teamCount}</b>
+          </button>
+          <button type="button">
+            <sup>03</sup> PROJECTS
+          </button>
+          <button type="button">
+            <sup>04</sup> TASKS
+          </button>
+          <button type="button">
+            <sup>05</sup> ACTIVITY
+          </button>
+          <button type="button">
+            <sup>06</sup> CHAT
+          </button>
+        </motion.nav>
+
+        {/* ── stat numbers ── */}
+        <motion.section
+          className="dtx-numbers"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.09, delayChildren: 0.65 } },
+          }}
+        >
+          <motion.article variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } }}>
+            <strong>{memberCount}</strong>
+            <span>CREW MEMBERS</span>
+          </motion.article>
+          <motion.article variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } }}>
+            <strong>{teamCount}</strong>
+            <span>TEAMS</span>
+          </motion.article>
+          <motion.article variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } }}>
+            <strong>{stats.totalProjects}</strong>
+            <span>PROJECTS</span>
+          </motion.article>
+          <motion.article variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } }}>
+            <strong>{openTaskCount}</strong>
+            <span>OPEN TASKS</span>
+          </motion.article>
+        </motion.section>
+
+        {/* ── (01) delivery pulse ── */}
+        <motion.section
+          className="dtx-block"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="dtx-block-head">
+            <span>(01)</span>
+            <span>DELIVERY PULSE</span>
+          </div>
+
+          <div className="dtx-pulse">
+            <div
+              className="dtx-completion"
+              style={{ "--completion": `${completionPercentage}%` }}
             >
-              <div className="detail-panel-heading">
-                <div>
-                  <span>Delivery pulse</span>
-                  <h2>Project progress</h2>
-                </div>
-                <button type="button">
-                  View projects <ChevronRight size={16} />
-                </button>
+              <strong>{completionPercentage}<i>%</i></strong>
+              <span>SHIPPED</span>
+              <div className="dtx-completion-bar" aria-hidden="true">
+                <span />
               </div>
-              <div className="detail-chart-preview">
-                <div className="detail-chart-copy">
-                  <div
-                    className="detail-chart-ring"
-                    style={{ "--completion": `${completionPercentage}%` }}
-                  >
-                    <span>{completionPercentage}%</span>
-                  </div>
-                  {projectPreview.length === 0 && (
-                    <div>
-                      <strong>Connect project data</strong>
-                      <p>
-                        Your project velocity and completion rate will appear
-                        here.
-                      </p>
-                    </div>
-                  )}
-                  {projectPreview.length > 0 && (
-                    <div>
-                      <div>
-                        <strong>{projectPreview.length} recent projects</strong>
-                        <p>Track delivery status and upcoming deadlines.</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div className="detail-chart-bars" aria-hidden="true">
-                  <span />
-                  <span />
-                  <span />
-                  <span />
-                  <span />
-                  <span />
-                  <span />
-                </div>
-              </div>
+            </div>
+
+            <div className="dtx-pulse-side">
+              {projectPreview.length === 0 && (
+                <p className="dtx-pulse-note">
+                  <em>No project data yet.</em> Velocity and deadlines will pulse here.
+                </p>
+              )}
               {projectPreview.length > 0 && (
-                <div className="detail-project-list">
+                <p className="dtx-pulse-note">
+                  <em>{projectPreview.length} recent projects</em> in motion — deadlines tracked below.
+                </p>
+              )}
+
+              {projectPreview.length > 0 && (
+                <div className="dtx-projects">
                   {projectPreview.map((project) => (
-                    <div className="detail-project-item" key={project._id}>
+                    <div className="dtx-project-row" key={project._id}>
                       <strong>{project.title}</strong>
                       <span>{project.status}</span>
                       <time dateTime={project.deadline}>
-                        Due:{" "}
-                        {projectDateFormatter.format(
-                          new Date(project.deadline),
-                        )}
+                        DUE {projectDateFormatter.format(new Date(project.deadline))}
                       </time>
                     </div>
                   ))}
                 </div>
               )}
-              <div className="detail-task-breakdown">
-                <div>
-                  <span>Todo</span>
-                  <strong>{taskStats.todo}</strong>
-                </div>
+            </div>
+          </div>
 
-                <div>
-                  <span>In progress</span>
-                  <strong>{taskStats.inProgress}</strong>
-                </div>
+          <div className="dtx-breakdown">
+            <div>
+              <span>TODO</span>
+              <strong>{taskStats.todo}</strong>
+            </div>
+            <div>
+              <span>IN PROGRESS</span>
+              <strong>{taskStats.inProgress}</strong>
+            </div>
+            <div>
+              <span>REVIEW</span>
+              <strong>{taskStats.review}</strong>
+            </div>
+            <div className="hot">
+              <span>DONE</span>
+              <strong>{taskStats.done}</strong>
+            </div>
+          </div>
+        </motion.section>
 
-                <div>
-                  <span>Review</span>
-                  <strong>{taskStats.review}</strong>
-                </div>
+        {/* ── (02) activity ── */}
+        <motion.section
+          className="dtx-block"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="dtx-block-head">
+            <span>(02)</span>
+            <span>THE PULSE — RECENT ACTIVITY</span>
+          </div>
 
-                <div>
-                  <span>Done</span>
-                  <strong>{taskStats.done}</strong>
-                </div>
-              </div>
-            </motion.article>
-
-            <motion.article
-              className="detail-panel detail-activity-panel"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, delay: 0.31 }}
-            >
-              <div className="detail-panel-heading">
-                <div>
-                  <span>Live timeline</span>
-                  <h2>Recent activity</h2>
-                </div>
-                <Activity size={19} />
-              </div>
-              {activityPreview.length === 0 && (
-                <div className="detail-empty-activity">
-                  <div>
-                    <Activity size={22} />
-                  </div>
-                  <strong>Activity feed is ready</strong>
-                  <p>Workspace changes will form a clear audit trail here.</p>
-                </div>
-              )}
-              {activityPreview.length > 0 && (
-                <div className="detail-activity-list">
-                  {activityPreview.map((activity) => (
-                    <div key={activity._id} className="detail-activity-item">
-                      <strong>{activity.actor?.name ?? "Unknown user"}</strong>
-                      <p>
-                        {activity.message ??
-                          activity.action ??
-                          "Something happened"}
-                      </p>
-                      <span>
-                        Context:{activity.project?.title ?? activity.entityType}
-                      </span>
-                      <time dateTime={activity.createdAt}>
-                        {activityDateFormatter.format(
-                          new Date(activity.createdAt),
-                        )}
-                      </time>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </motion.article>
-
-            <motion.article
-              className="detail-panel detail-teams-panel"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, delay: 0.38 }}
-            >
-              <div className="detail-panel-heading">
-                <div>
-                  <span>People and ownership</span>
-                  <h2>Your teams</h2>
-                </div>
-                <button type="button">
-                  Manage teams <ChevronRight size={16} />
-                </button>
-              </div>
-              {teamPreview.length === 0 && (
-                <div className="detail-team-preview">
-                  <div className="detail-team-avatar">
-                    <UsersRound size={24} />
-                  </div>
-                  <div>
-                    <strong>Build your first team</strong>
-                    <p>
-                      Group members around projects, roles, and shared delivery
-                      goals.
-                    </p>
-                  </div>
-                  <button type="button">
-                    <Plus size={17} /> New team
-                  </button>
-                </div>
-              )}
-              {teamPreview.length > 0 && (
-                <div className="detail-team-list">
-                  {teamPreview.map((team) => (
-                    <div key={team._id} className="detail-team-item">
-                      <strong>{team.name}</strong>
-                      <span>{team.members?.length ?? 0} members</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </motion.article>
-
-            <motion.article
-              className="detail-panel detail-quick-panel"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, delay: 0.45 }}
-            >
-              <div className="detail-panel-heading">
-                <div>
-                  <span>Jump back in</span>
-                  <h2>Quick actions</h2>
-                </div>
-                <Zap size={19} />
-              </div>
-              <div className="detail-quick-actions">
-                {isOwner && (
-                  <button type="button">
-                    <span>
-                      <UsersRound size={18} />
-                    </span>
-                    <div>
-                      <strong>Invite member</strong>
-                      <small>Grow your workspace</small>
-                    </div>
-                    <ChevronRight size={17} />
-                  </button>
-                )}
-                <button type="button">
+          {activityPreview.length === 0 && (
+            <div className="dtx-empty">
+              <p>
+                <em>Silence, for now.</em> Every move your crew makes will echo here.
+              </p>
+            </div>
+          )}
+          {activityPreview.length > 0 && (
+            <div className="dtx-timeline">
+              {activityPreview.map((activity) => (
+                <div key={activity._id} className="dtx-tl-item">
+                  <strong>{activity.actor?.name ?? "Unknown user"}</strong>
+                  <p>
+                    {activity.message ??
+                      activity.action ??
+                      "Something happened"}
+                  </p>
                   <span>
-                    <FolderKanban size={18} />
+                    CTX — {activity.project?.title ?? activity.entityType}
                   </span>
-                  <div>
-                    <strong>Create project</strong>
-                    <small>Start a delivery track</small>
-                  </div>
-                  <ChevronRight size={17} />
-                </button>
-                <button type="button">
-                  <span>
-                    <ListTodo size={18} />
-                  </span>
-                  <div>
-                    <strong>Add task</strong>
-                    <small>Capture the next move</small>
-                  </div>
-                  <ChevronRight size={17} />
-                </button>
+                  <time dateTime={activity.createdAt}>
+                    {activityDateFormatter.format(new Date(activity.createdAt))}
+                  </time>
+                </div>
+              ))}
+            </div>
+          )}
+        </motion.section>
+
+        {/* ── (03) teams ── */}
+        <motion.section
+          className="dtx-block"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="dtx-block-head">
+            <span>(03)</span>
+            <span>YOUR TEAMS</span>
+          </div>
+
+          {teamPreview.length === 0 && (
+            <div className="dtx-empty dtx-empty-team">
+              <p>
+                <em>No squads yet.</em> Group your crew around shared delivery goals.
+              </p>
+              <button type="button" className="dtx-create">
+                <Plus size={16} strokeWidth={2.4} /> FIRST TEAM
+              </button>
+            </div>
+          )}
+          {teamPreview.length > 0 && (
+            <div className="dtx-teams">
+              {teamPreview.map((team) => (
+                <div key={team._id} className="dtx-team-row">
+                  <strong>{team.name}</strong>
+                  <span>{team.members?.length ?? 0} CREW</span>
+                  <i><ArrowUpRight size={22} strokeWidth={2.2} /></i>
+                </div>
+              ))}
+            </div>
+          )}
+        </motion.section>
+
+        {/* ── (04) quick actions ── */}
+        <motion.section
+          className="dtx-block"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="dtx-block-head">
+            <span>(04)</span>
+            <span>JUMP BACK IN</span>
+          </div>
+
+          <div className="dtx-actions">
+            {isOwner && (
+              <button type="button" className="dtx-action-row">
+                <span className="dtx-action-num">A</span>
+                <div>
+                  <strong>INVITE MEMBER</strong>
+                  <small>grow your universe</small>
+                </div>
+                <i><ArrowUpRight size={24} strokeWidth={2.2} /></i>
+              </button>
+            )}
+            <button type="button" className="dtx-action-row">
+              <span className="dtx-action-num">B</span>
+              <div>
+                <strong>CREATE PROJECT</strong>
+                <small>start a delivery track</small>
               </div>
-            </motion.article>
-          </section>
-        </main>
+              <i><ArrowUpRight size={24} strokeWidth={2.2} /></i>
+            </button>
+            <button type="button" className="dtx-action-row">
+              <span className="dtx-action-num">C</span>
+              <div>
+                <strong>ADD TASK</strong>
+                <small>capture the next move</small>
+              </div>
+              <i><ArrowUpRight size={24} strokeWidth={2.2} /></i>
+            </button>
+          </div>
+        </motion.section>
+
+        {/* bottom rail */}
+        <div className="dtx-foot">
+          <span><i className="dtx-blip" /> DECK LIVE</span>
+          <span>ACCESS VERIFIED — MEMBER SHIELDED</span>
+          <span>© 2026</span>
+        </div>
       </div>
     </div>
   );
