@@ -5,6 +5,7 @@ import Landing from "../pages/landing/Landing"
 import Organization from "../pages/Organization/organization"
 import ProtectedRoute from "./ProtectedRoutes"
 import OrganizationDetail from "../pages/OrganizationDetails/organizationDetail"
+import OrganizationMember from "../pages/Member/Member"
 
 
 const AppRoutes = ()=>{
@@ -22,6 +23,12 @@ const AppRoutes = ()=>{
             <Route path="/organization/:id" element={
                 <ProtectedRoute>
                     <OrganizationDetail/>
+                </ProtectedRoute>
+            }/>
+
+            <Route path="/organization/:id/members" element={
+                <ProtectedRoute>
+                    <OrganizationMember/>
                 </ProtectedRoute>
             }/>
         </Routes>

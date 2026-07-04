@@ -20,3 +20,8 @@ export const singleOrganization = async (id)=>{
 
     return response.data
 }
+
+export const getOrganizationMembers = async (id,{page,limit,search})=>{
+    const response = await instance.get(`/organization/${id}/members`,{params:{page,limit,search}})
+    return response.data
+}
