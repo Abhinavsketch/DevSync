@@ -13,8 +13,11 @@ import {
   Settings,
 } from "lucide-react";
 import { AuthContext } from "../../context/authContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import { getDashboardOverview } from "../../api/dashboardApi";
+import { X } from "lucide-react"
+import {createInvitation} from "../../api/invitationApi"
+
 
 const activityDateFormatter = new Intl.DateTimeFormat("en-IN");
 const projectDateFormatter = new Intl.DateTimeFormat("en-IN");
@@ -34,6 +37,9 @@ const OrganizationDetail = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
+  const [showInviteForm,setShowInviteForm] = useState(false)
+  const [email,setEmail] = useState("")
+  const [inviteError,setInviteError] = useState("")
   const navigate = useNavigate();
 
   const headbacktoOrganization = () => {
@@ -45,6 +51,23 @@ const OrganizationDetail = () => {
     setError("")
     setLoading(true)
     setRetry((previous) => (previous + 1))
+  }
+
+  const handleFormSubmit =async (e)=>{
+    e.preventDefault()
+    setInviteError("")
+    try{
+      if(!email.trim()){
+        setInviteError("Enter the Valid Email")
+        return
+      }
+      await createInvitation(params.id,email)
+      setEmail("")
+      setShowInviteForm(false)
+    }
+    catch(error){
+      setInviteError(error.response?.data?.message)
+    }
   }
 
   useEffect(() => {
@@ -188,6 +211,7 @@ const OrganizationDetail = () => {
     taskStats.total === 0
       ? 0
       : Math.round((taskStats.done / taskStats.total) * 100);
+
   return (
     <div className="dtx-page">
       <div className="dtx-frame">
@@ -317,8 +341,8 @@ const OrganizationDetail = () => {
           }}
         >
           <motion.article variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } }}>
-            <strong>{memberCount}</strong>
-            <span>CREW MEMBERS</span>
+            <Link to={`/organization/${params.id}/members`}><strong>{memberCount}</strong>
+            <span>CREW MEMBERS</span></Link>
           </motion.article>
           <motion.article variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } }}>
             <strong>{teamCount}</strong>
@@ -500,7 +524,7 @@ const OrganizationDetail = () => {
 
           <div className="dtx-actions">
             {isOwner && (
-              <button type="button" className="dtx-action-row">
+              <button type="button" className="dtx-action-row" onClick={()=>(setShowInviteForm(prev => !prev))}>
                 <span className="dtx-action-num">A</span>
                 <div>
                   <strong>INVITE MEMBER</strong>
@@ -534,6 +558,26 @@ const OrganizationDetail = () => {
           <span>ACCESS VERIFIED — MEMBER SHIELDED</span>
           <span>© 2026</span>
         </div>
+
+        {showInviteForm && <div className="dtx-invite-overlay">
+          <div className="dtx-invite-modal">
+            <button type="button" className="dtx-invite-x" onClick={()=>(setShowInviteForm(false))}>
+              <X size={17} strokeWidth={2.4} />
+            </button>
+            <span className="dtx-invite-kicker">// SUMMON CREW</span>
+            <h2 className="dtx-invite-title">Invite a <em>member.</em></h2>
+            <p className="dtx-invite-sub">A secure, time-boxed invite lands in their inbox — they accept, and the crew grows.</p>
+            <form onSubmit={handleFormSubmit} className="dtx-invite-form">
+              <label className="dtx-invite-label">(01) — EMAIL_ID</label>
+              <input type="email" placeholder="you@crew.dev" onChange={(e)=>setEmail(e.target.value)} value={email}/>
+              {inviteError && <p className="dtx-invite-error">⚠ {inviteError}</p>}
+              <button type="submit" className="dtx-invite-send">
+                <span>SEND INVITE</span>
+                <ArrowUpRight size={18} strokeWidth={2.2} />
+              </button>
+            </form>
+          </div>
+        </div>}
       </div>
     </div>
   );

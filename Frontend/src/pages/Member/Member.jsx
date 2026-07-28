@@ -18,13 +18,14 @@ const lineReveal = {
 
 const OrganizationMember = () => {
     const [members, setMembers] = useState([]);
-    const params = useParams();
+    const params = useParams(); 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("")
     const [search, setSearch] = useState("")
     const [page,setPage] = useState(1)
     const [pagination,setPagination] = useState(null)
     const [debounceSearch, setDebounceSearch] = useState("")
+    const [isOwner,setIsOwner] = useState(false)
 
     useEffect(() => {
         const timer = setTimeout(() => {setDebounceSearch(search) 
@@ -39,6 +40,7 @@ const OrganizationMember = () => {
                 const data = await getOrganizationMembers(params.id, { page: page, limit: 10, search: debounceSearch })
                 setMembers(data.members)
                 setPagination(data.pagination)
+                setIsOwner(data.isOwner)
             }
             catch (error) {
                 setError(error.response?.data?.message)
@@ -80,6 +82,7 @@ const OrganizationMember = () => {
                     >
                         the people behind the pulse
                     </motion.p>
+                    {isOwner && <button className="mbx-invite">+ Invite</button>}
                     <h1 className="mbx-title" aria-label="The crew.">
                         <span className="mbx-mask">
                             <motion.span
