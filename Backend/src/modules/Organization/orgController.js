@@ -149,6 +149,8 @@ const getOrganizationMembersController = async (req, res) => {
 
     const members = org.members;
 
+    const isOwner = org.owner.toString() === req.user._id.toString()
+
     const memberFilter = {
       _id:{
         $in:members
@@ -226,7 +228,8 @@ const getOrganizationMembersController = async (req, res) => {
     res.status(200).json({
       message: "Members of Organization Found",
       members: memberDetails,
-      pagination:paginationObject
+      pagination:paginationObject,
+      isOwner
     });
   } catch (error) {
     res.status(500).json({
