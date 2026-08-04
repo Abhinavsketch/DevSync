@@ -2,13 +2,15 @@ import DashNav from "../../components/layout/Dashboard Navbar/dashNav";
 import "./organization.css"
 import OrganizationCard from "../../components/layout/OrganizationCard/organizationCard";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Asterisk, Plus, Search } from "lucide-react";
+import { ArrowUpRight, Asterisk, Inbox, Plus, Search } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { createOrganization } from "../../api/organizationApi";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext"
 import { getOrganizations } from "../../api/organizationApi";
 import { useNavigate } from "react-router-dom"
+import { listUserInvites } from "../../api/invitationApi";
 
 const lineReveal = {
   hidden: { y: "115%" },
@@ -36,6 +38,7 @@ const Organization = () => {
 
   const [error, setError] = useState("")
   const [creating, setCreating] = useState(false)
+  const [count,setCount] = useState(0)
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -94,6 +97,22 @@ const Organization = () => {
 
     orgList()
   }, [])
+
+  useEffect(()=>{
+    const getInvitationCount = async ()=>{
+      try{
+        setError("");
+
+        const response = await listUserInvites();
+        setCount(response.pagination?.totalInvites || 0)
+      }
+      catch(error){
+        setError(error.response?.data?.message)
+      }
+    }
+
+    getInvitationCount()
+  },[])
 
   const totalMembers = organizations.reduce((total, organization) => (total + (organization?.members?.length || 0)), 0)
 
@@ -185,6 +204,11 @@ const Organization = () => {
           >
             <Plus size={17} strokeWidth={2.4} /> FORGE NEW
           </button>
+          <Link to="/invites" className="orgx-inbox">
+            <Inbox size={16} strokeWidth={2.2} />
+            INBOX
+            <span className="orgx-inbox-count">{count}</span>
+          </Link>
         </motion.div>
 
         {/* forge panel */}

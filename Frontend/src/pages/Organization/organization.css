@@ -192,6 +192,42 @@
   transform: rotate(90deg);
 }
 
+/* ── inbox link ── */
+.orgx-inbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 14px 20px;
+  border-radius: 99px;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--char);
+  border: 1.5px solid var(--char);
+  transition: all 0.28s ease;
+  white-space: nowrap;
+}
+
+.orgx-inbox:hover {
+  color: var(--paper);
+  background: var(--char);
+  transform: translateY(-2px);
+}
+
+.orgx-inbox-count {
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 99px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--paper);
+  background: #ff4b1e;
+}
+
 /* ── forge panel ── */
 .orgx-panel {
   display: grid;
