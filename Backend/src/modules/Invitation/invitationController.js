@@ -382,7 +382,7 @@ const listuserInvitesController = async (req,res)=>{
     if(!totalInvites){
       return res.status(200).json({
         message:"There is no invitation from any Organization",
-        invites:[]
+        invitations:[]
       })
     }
 
@@ -418,7 +418,7 @@ const listuserInvitesController = async (req,res)=>{
     const skip = (normalizedPage -1)*normalizedLimit
 
 
-    const invites = await invitationModel.find({receiver:email,status:"pending"}).sort({createdAt:-1}).skip(skip).limit(normalizedLimit).lean()
+    const invites = await invitationModel.find({receiver:email,status:"pending"}).populate("organization","name").populate("sender","name email").sort({createdAt:-1}).skip(skip).limit(normalizedLimit).lean()
 
     const pagination = {
       page:normalizedPage,
