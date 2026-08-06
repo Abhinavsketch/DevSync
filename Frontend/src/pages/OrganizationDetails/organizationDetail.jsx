@@ -313,9 +313,7 @@ const OrganizationDetail = () => {
           <button type="button" className="active">
             <sup>01</sup> OVERVIEW
           </button>
-          <button type="button">
-            <sup>02</sup> TEAMS <b>{teamCount}</b>
-          </button>
+          <Link to={`/organization/${params.id}/teams`}><sup>02</sup> TEAMS <b>{teamCount}</b></Link>
           <button type="button">
             <sup>03</sup> PROJECTS
           </button>
@@ -502,11 +500,13 @@ const OrganizationDetail = () => {
           {teamPreview.length > 0 && (
             <div className="dtx-teams">
               {teamPreview.map((team) => (
-                <div key={team._id} className="dtx-team-row">
+                <Link to={`/organization/${params.id}/teams/${team._id}`} key={team._id}>
+                  <div  className="dtx-team-row">
                   <strong>{team.name}</strong>
                   <span>{team.members?.length ?? 0} CREW</span>
                   <i><ArrowUpRight size={22} strokeWidth={2.2} /></i>
                 </div>
+                </Link>
               ))}
             </div>
           )}

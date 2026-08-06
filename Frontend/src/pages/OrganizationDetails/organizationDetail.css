@@ -403,7 +403,7 @@
   border-bottom: 1px solid var(--char);
 }
 
-.dtx-tabs button {
+.dtx-tabs :is(button, a) {
   position: relative;
   display: inline-flex;
   align-items: flex-start;
@@ -417,14 +417,14 @@
   transition: color 0.25s ease;
 }
 
-.dtx-tabs button sup {
+.dtx-tabs :is(button, a) sup {
   font-size: 0.56rem;
   color: rgba(20, 20, 18, 0.4);
   margin-top: -2px;
   transition: color 0.25s ease;
 }
 
-.dtx-tabs button b {
+.dtx-tabs :is(button, a) b {
   font-weight: 600;
   color: var(--paper);
   background: #ff4b1e;
@@ -434,7 +434,7 @@
   margin-left: 4px;
 }
 
-.dtx-tabs button::after {
+.dtx-tabs :is(button, a)::after {
   content: "";
   position: absolute;
   left: 16px;
@@ -447,20 +447,20 @@
   transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.dtx-tabs button:hover {
+.dtx-tabs :is(button, a):hover {
   color: var(--char);
 }
 
-.dtx-tabs button.active {
+.dtx-tabs :is(button, a).active {
   color: var(--char);
 }
 
-.dtx-tabs button.active sup {
+.dtx-tabs :is(button, a).active sup {
   color: #ff4b1e;
 }
 
-.dtx-tabs button.active::after,
-.dtx-tabs button:hover::after {
+.dtx-tabs :is(button, a).active::after,
+.dtx-tabs :is(button, a):hover::after {
   transform: scaleX(1);
 }
 

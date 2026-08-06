@@ -8,6 +8,8 @@ import OrganizationDetail from "../pages/OrganizationDetails/organizationDetail"
 import OrganizationMember from "../pages/Member/Member"
 import Invites from "../pages/Invites/invites"
 import OrganizationInvites from "../pages/OrganizationInvites/Organization"
+import Team from "../pages/Team/Team"
+import TeamDetail from "../pages/TeamDetails/TeamDetail"
 
 
 const AppRoutes = ()=>{
@@ -43,6 +45,17 @@ const AppRoutes = ()=>{
             <Route path="/organization/:id/invites" element={
                 <ProtectedRoute>
                     <OrganizationInvites/>
+                </ProtectedRoute>
+            }/>
+
+            <Route path="/organization/:id/teams" element={
+                <ProtectedRoute>
+                    <Team/>
+                </ProtectedRoute>
+            }/>
+            <Route path="/organization/:id/teams/:teamId" element={
+                <ProtectedRoute>
+                    <TeamDetail/>
                 </ProtectedRoute>
             }/>
         </Routes>
