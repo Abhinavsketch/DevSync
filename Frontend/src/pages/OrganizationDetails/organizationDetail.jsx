@@ -328,6 +328,9 @@ const OrganizationDetail = () => {
           <button type="button">
             <sup>06</sup> CHAT
           </button>
+          {isOwner && <Link to={`/organization/${params.id}/invites`} className="dtx-tab-invites">
+            <sup>07</sup> SENT INVITES <ArrowUpRight size={13} strokeWidth={2.4} />
+          </Link>}
         </motion.nav>
 
         {/* ── stat numbers ── */}

@@ -7,6 +7,7 @@ import ProtectedRoute from "./ProtectedRoutes"
 import OrganizationDetail from "../pages/OrganizationDetails/organizationDetail"
 import OrganizationMember from "../pages/Member/Member"
 import Invites from "../pages/Invites/invites"
+import OrganizationInvites from "../pages/OrganizationInvites/Organization"
 
 
 const AppRoutes = ()=>{
@@ -36,6 +37,12 @@ const AppRoutes = ()=>{
             <Route path="/invites" element={
                 <ProtectedRoute>
                     <Invites/>
+                </ProtectedRoute>
+            }/>
+
+            <Route path="/organization/:id/invites" element={
+                <ProtectedRoute>
+                    <OrganizationInvites/>
                 </ProtectedRoute>
             }/>
         </Routes>

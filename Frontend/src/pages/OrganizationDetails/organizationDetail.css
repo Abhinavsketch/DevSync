@@ -1230,3 +1230,44 @@
 .dtx-invite-send:hover svg {
   transform: rotate(45deg) scale(1.15);
 }
+
+/* ── owner-only "sent invites" tab-link ── */
+.dtx-tab-invites {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 10px 18px;
+  border-radius: 99px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: #ff4b1e;
+  border: 1.5px solid rgba(255, 75, 30, 0.45);
+  transition: all 0.28s ease;
+}
+
+.dtx-tab-invites sup {
+  font-size: 0.56rem;
+  color: rgba(255, 75, 30, 0.6);
+}
+
+.dtx-tab-invites svg {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.dtx-tab-invites:hover {
+  color: var(--paper);
+  background: #ff4b1e;
+  border-color: #ff4b1e;
+  transform: translateY(-2px);
+}
+
+.dtx-tab-invites:hover sup {
+  color: rgba(244, 241, 234, 0.7);
+}
+
+.dtx-tab-invites:hover svg {
+  transform: rotate(45deg);
+}
