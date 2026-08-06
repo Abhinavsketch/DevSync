@@ -72,8 +72,9 @@ const orgTeam = async (req,res)=>{
 
         const team = await teamModel.find({organization:orgId})
         if(team.length === 0 ){
-            return res.status(404).json({
-                message:"Team not found"
+            return res.status(200).json({
+                message:"Team not found",
+                team:[]
             })
         }
 
@@ -125,12 +126,29 @@ const addMember = async (req,res)=>{
             })
         }
 
+        const org = await orgModel.findById(team.organization)
+        if(!org){
+            return res.status(404).json({
+                message:"No Organization Found"
+            })
+        }
+
+        const isMember = org.members.some(
+            member => member.toString() === user._id.toString()
+        )
+        if(!isMember){
+            return res.status(404).json({
+                message:"You are not the Member of the Organization"
+            })
+        }
+
         const oldMember = [...team.members]
 
         team.members.push({user:user._id,
             role
         })
         await team.save()
+        await team.populate("members.user")
 
         await activityLogger({
             actor:req.user._id,
@@ -155,7 +173,8 @@ const addMember = async (req,res)=>{
             read:false
         })
         res.status(200).json({
-            message:"Member Added"
+            message:"Member Added",
+            members:team.members
         })
 
 
@@ -322,7 +341,7 @@ const changeRole = async (req,res)=>{
 
         member.role = newRole
         await team.save()
-
+        await team.populate("members.user")
         await activityLogger({
             actor:req.user._id,
             project:null,
@@ -349,7 +368,7 @@ const changeRole = async (req,res)=>{
         
         res.status(200).json({
             message:"Role Change Suuccessfully",
-            team
+            members:team.members
         })
     }
 
