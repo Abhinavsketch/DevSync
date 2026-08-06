@@ -311,7 +311,9 @@ const listOrganizationInvitesController = async (req,res)=>{
     const invite = await invitationModel.countDocuments({organization:req.organization._id})
     if(invite === 0){
       return res.status(200).json({
-        message:"Invitations of this Organizations not found"
+        message:"Invitations of this Organizations not found",
+        invitations:[]
+
       })
     }
 
