@@ -7,25 +7,14 @@ const notification = require("../../services/notificationService.js")
 
 const createProject = async (req,res)=>{
     try{
-        const teamId = req.params.teamId
         const {title,description,status,deadline} = req.body
-        if(!teamId){
-            return res.status(404).json({
-                message:"Team not found"
-            })
-        }
 
-        const team = await teamModel.findById(teamId)
-        if(!team){
-            return res.status(404).json({
-                message:"Team not found"
-            })
-        }
+        const team = req.team
 
         const project = await projectModel.create({
             title,
             description,
-            team:teamId,
+            team:team._id,
             status,
             deadline
         })
@@ -66,23 +55,13 @@ const createProject = async (req,res)=>{
 
 const getProject = async (req,res)=>{
     try{
-        const teamId = req.params.teamId
-        if(!teamId){
-            return res.status(400).json({
-                message:"Team Id not found"
-            })
-        }
-
-        const team = await teamModel.findById(teamId).populate("projects")
-        if(!team){
-            return res.status(404).json({
-                message:"Team not found"
-            })
-        }
+        const team = req.team
+        await team.populate("projects")
 
         if(team.projects.length === 0){
-            return res.status(404).json({
-                message:"Project not found"
+            return res.status(200).json({
+                message:"Project not found",
+                projects:[]
             })
         }
 
@@ -101,21 +80,9 @@ const getProject = async (req,res)=>{
 
 const updateController = async (req,res)=>{
     try{
-        const projectId = req.params.projectId
-        if(!projectId){
-            return res.status(400).json({
-                message:"Project Id not Found"
-            })
-        }
-
         const {title,description,status,deadline} = req.body
 
-        const project = await projectModel.findById(projectId).populate("team")
-        if(!project){
-            return res.status(404).json({
-                message:"Project not Found"
-            })
-        }
+        const project = req.project
 
         const orgId = project.team.organization
 
@@ -147,10 +114,10 @@ const updateController = async (req,res)=>{
 
         await activityLogger({
             actor:req.user._id,
-            project:projectId,
+            project:project._id,
             organization:orgId,
             entityType:"Project",
-            entity:projectId,
+            entity:project._id,
             action:"UPDATE_PROJECT",
             message:`${req.user.name} updated the Project`,
             oldValue:oldProject,
@@ -176,19 +143,9 @@ const updateController = async (req,res)=>{
 
 const deleteController = async (req,res)=>{
     try{
-        const projectId = req.params.projectId
-        if(!projectId){
-            return res.status(404).json({
-                message:"Project Id not found"
-            })
-        }
+        const project = req.project
 
-        const project = await projectModel.findById(projectId)
-        if(!project){
-            return res.status(404).json({
-                message:"Project not Found"
-            })
-        }
+        const team = req.team
 
         const oldProject = {
             title:project.title,
@@ -203,28 +160,21 @@ const deleteController = async (req,res)=>{
             }
         })
 
-        const team = await teamModel.findById(project.team)
-        if(!team){
-            return res.status(404).json({
-                message:"Team not found"
-            })
-        }
-
         const remainingProject = team.projects.filter(
-            project => project.toString() !== projectId.toString()
+            p => p.toString() !== project._id.toString()
         )
 
         team.projects = remainingProject
         await team.save()
 
-        await projectModel.findByIdAndDelete(projectId)
+        await projectModel.findByIdAndDelete(project._id)
 
         await activityLogger({
             actor:req.user._id,
-            project:projectId,
+            project:project._id,
             organization:team.organization,
             entityType:"Project",
-            entity:projectId,
+            entity:project._id,
             action:"DELETE_PROJECT",
             message:`${req.user.name} deleted  project ${oldProject.title}`,
             oldValue:oldProject,
