@@ -10,6 +10,7 @@ import Invites from "../pages/Invites/invites"
 import OrganizationInvites from "../pages/OrganizationInvites/Organization"
 import Team from "../pages/Team/Team"
 import TeamDetail from "../pages/TeamDetails/TeamDetail"
+import Project from "../pages/Project/Project"
 
 
 const AppRoutes = ()=>{
@@ -56,6 +57,11 @@ const AppRoutes = ()=>{
             <Route path="/organization/:id/teams/:teamId" element={
                 <ProtectedRoute>
                     <TeamDetail/>
+                </ProtectedRoute>
+            }/>
+            <Route path="/organization/:id/teams/:teamId/projects" element={
+                <ProtectedRoute>
+                    <Project/>
                 </ProtectedRoute>
             }/>
         </Routes>
