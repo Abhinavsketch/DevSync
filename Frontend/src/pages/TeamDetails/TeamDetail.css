@@ -116,6 +116,40 @@
 .tdx-new:hover::before { transform: translateY(0); }
 .tdx-new svg { position: relative; z-index: 1; }
 
+/* projects link — ghost pill → ink flood */
+.tdx-projectslink {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.3rem;
+  border: 1px solid var(--char);
+  border-radius: 99px;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--char);
+  background: transparent;
+  transition: color 0.35s;
+}
+.tdx-projectslink::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--char);
+  transform: translateX(-101%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: -1;
+}
+.tdx-projectslink:hover { color: var(--paper); }
+.tdx-projectslink:hover::before { transform: translateX(0); }
+.tdx-projectslink svg { position: relative; z-index: 1; transition: transform 0.35s; }
+.tdx-projectslink:hover svg { transform: translate(3px, -3px); }
+
 /* ── state blocks ── */
 .tdx-state {
   padding: clamp(2.4rem, 8vw, 5rem) 0;

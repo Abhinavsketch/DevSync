@@ -1,5 +1,5 @@
 import "./TeamDetail.css";
-import { useParams } from "react-router-dom";
+import { useParams,Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getTeamMember, addMember,removeMember,changeRole } from "../../api/teamApi";
 import { motion } from "framer-motion";
@@ -99,6 +99,7 @@ const TeamDetail = () => {
             <button className="tdx-new" onClick={() => setShowAddForm((prev) => !prev)}>
               {showAddForm ? <><X size={15}/> CLOSE</> : <><Plus size={15}/> ADD MEMBER</>}
             </button>
+            <Link to={`/organization/${param.id}/teams/${param.teamId}/projects`} className="tdx-projectslink">PROJECTS <ArrowUpRight size={15}/></Link>
           </div>
         </header>
 
