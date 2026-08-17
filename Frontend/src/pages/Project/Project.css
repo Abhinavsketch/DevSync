@@ -276,6 +276,66 @@
   background: rgba(20, 20, 18, 0.05);
   text-decoration: line-through;
 }
+/* inline status select — colored per status */
+.prx-statusselect {
+  padding: 0.32rem 0.55rem;
+  border-radius: 99px;
+  border: 1px solid rgba(20, 20, 18, 0.2);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--char-dim);
+  background: transparent;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.25s, color 0.25s, background 0.25s;
+}
+.prx-statusselect option {
+  background: var(--paper);
+  color: var(--char);
+  letter-spacing: normal;
+}
+.prx-statusselect.is-active {
+  color: #ff4b1e;
+  border-color: rgba(255, 75, 30, 0.4);
+  background: rgba(255, 75, 30, 0.08);
+}
+.prx-statusselect.is-completed {
+  color: #4a7c1e;
+  border-color: rgba(120, 170, 40, 0.5);
+  background: rgba(150, 190, 40, 0.14);
+}
+.prx-statusselect.is-on-hold {
+  color: #9a6a12;
+  border-color: rgba(255, 179, 71, 0.5);
+  background: rgba(255, 179, 71, 0.16);
+}
+.prx-statusselect.is-cancelled {
+  color: #9a9690;
+  border-color: rgba(20, 20, 18, 0.18);
+  background: rgba(20, 20, 18, 0.05);
+}
+
+/* delete button — ghost → red */
+.prx-delete {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: var(--r-sm);
+  border: 1px solid rgba(20, 20, 18, 0.2);
+  color: var(--char-dim);
+  background: transparent;
+  transition: color 0.25s, border-color 0.25s, background 0.25s;
+}
+.prx-delete:hover {
+  color: #fff;
+  border-color: #ff4b1e;
+  background: #ff4b1e;
+}
+
 .prx-meta {
   display: inline-flex;
   align-items: center;
